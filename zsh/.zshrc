@@ -111,8 +111,8 @@ HIST_STAMPS="yyyy-mm-dd"
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Created by `pipx` on 2026-01-24 05:44:02
-export PATH="$PATH:/home/icortes/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
 
 # opencode
-export PATH=/home/icortes/.opencode/bin:$PATH
+export PATH=$HOME/.opencode/bin:$PATH
 export PATH="$HOME/.config/composer/vendor/bin:$PATH"

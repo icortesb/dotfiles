@@ -13,6 +13,10 @@ PACKAGES=(
   swaync
   wofi
   zsh
+  jq
+  hyprland
+  hyprlock
+  hyprpaper
 )
 
 STOW_PACKAGES=(
@@ -58,6 +62,19 @@ backup_if_exists "$HOME/.config/wofi"
 echo "==> Applying stow"
 cd "$DOTFILES_DIR"
 stow "${STOW_PACKAGES[@]}"
+
+echo "==> Setting up wallpapers"
+mkdir -p "$HOME/walls"
+rm -rf "$HOME/walls/"*
+cp "$DOTFILES_DIR/walls/"* "$HOME/walls/" 2>/dev/null || echo "No wallpapers found in dotfiles"
+
+echo "==> Detecting monitors and configuring Hyprland"
+if command -v hyprctl >/dev/null 2>&1; then
+    bash "$HOME/.config/hypr/scripts/detect-monitors.sh"
+else
+    echo "Hyprland not running, skipping monitor detection"
+    echo "Run 'bash ~/.config/hypr/scripts/detect-monitors.sh' after starting Hyprland"
+fi
 
 echo
 echo "==> Done"

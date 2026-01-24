@@ -48,7 +48,7 @@ key_forward=Tab
 key_backward=Shift-ISO_Left_Tab
 
 # stylesheet
-style=/home/icortes/.config/wofi/style.css
+style=$HOME/.config/wofi/style.css
 
 # keybinds (vim-ish)
 key_up=Ctrl-k
@@ -60,4 +60,4 @@ key_forward=Tab
 key_backward=Shift-ISO_Left_Tab
 
 # stylesheet
-style=/home/icortes/.config/wofi/style.css
+style=$HOME/.config/wofi/style.css
