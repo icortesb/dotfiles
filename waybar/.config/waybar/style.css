@@ -86,6 +86,8 @@ window#waybar {
 
 #clock {
   color: @fg;
+  /* padding: 12px; */
+  font-size: 1.4rem;
 }
 
 #disk {
@@ -109,5 +111,6 @@ window#waybar {
 }
 
 #custom-power {
-  padding: 0 20px; /* aumenta el espacio arriba/abajo si está cortado */
+  padding: 0 25px; /* aumenta el espacio arriba/abajo si está cortado */
+  font-size: 1.4rem;
 }

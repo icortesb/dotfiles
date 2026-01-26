@@ -7,10 +7,10 @@
   // "width": 1280, // Waybar width
   "spacing": 4, // Gaps between modules (4px)
   // Choose the order of the modules
-  "modules-left": ["hyprland/workspaces", "hyprland/window"],
-  "modules-center": ["custom/power"],
+  "modules-left": ["hyprland/workspaces"],
+  "modules-center": ["clock"],
   "modules-right": [
-    "clock",
+    "custom/power",
     "tray",
   ],
   // Modules configuration
@@ -19,9 +19,9 @@
     "all-outputs": true,
     "warp-on-scroll": false,
     "format": "{name}",
-    "persistent-workspaces": {
-      "*": 9,
-    },
+   // "persistent-workspaces": {
+   //   "*": 9,
+   // },
   },
   "hyprland/window": {
     "max-length": 40,
@@ -43,7 +43,7 @@
   "custom/sep": {
     "format": "|",
     "interval": 0,
-    "tooltip": false,
+   "tooltip": false,
   },
   "custom/power": {
     "format": "⏻",
