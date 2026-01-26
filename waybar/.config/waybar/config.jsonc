@@ -10,8 +10,8 @@
   "modules-left": ["hyprland/workspaces"],
   "modules-center": ["clock"],
   "modules-right": [
-    "custom/power",
     "tray",
+    "custom/power",
   ],
   // Modules configuration
   "hyprland/workspaces": {
