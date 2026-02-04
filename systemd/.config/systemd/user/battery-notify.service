@@ -1,0 +1,12 @@
+[Unit]
+Description=Battery Level Notification Service
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.config/hypr/scripts/battery-notify.sh
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target
