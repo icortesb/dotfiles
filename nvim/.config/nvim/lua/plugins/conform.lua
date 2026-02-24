@@ -21,6 +21,15 @@ return {
                 -- Configuración de Prettier (para encontrar plugins globales)
                 prettier = {
                     require_cwd = false,
+                    prefer_local = false,
+                    args = {
+                        "--plugin=/usr/lib/node_modules/prettier-plugin-astro/dist/index.js",
+                        "--stdin-filepath",
+                        "$FILENAME",
+                    },
+                    env = {
+                        NODE_PATH = "/usr/lib/node_modules",
+                    },
                 },
                 -- Configuración de PHP CS Fixer (PARA SOLUCIONAR TU ERROR)
                 php_cs_fixer = {
