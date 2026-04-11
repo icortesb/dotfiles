@@ -10,6 +10,9 @@ set -e
 DOTFILES_DIR="$HOME/.dotfiles"
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 
+echo "==> Installing nvim system dependencies"
+sudo pacman -S --needed fd lazygit fzf luarocks tree-sitter
+
 echo "==> Backing up old nvim data"
 for dir in "$HOME/.local/share/nvim" "$HOME/.cache/nvim" "$HOME/.local/state/nvim"; do
   if [ -d "$dir" ]; then
