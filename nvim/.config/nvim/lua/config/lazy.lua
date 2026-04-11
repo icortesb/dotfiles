@@ -40,8 +40,16 @@ require("lazy").setup({
   checker = {
     enabled = true, -- check for plugin updates periodically
     notify = false, -- notify on update
+    frequency = 3600, -- check at most once per hour (not at every startup)
   }, -- automatically check for plugin updates
-  concurrency = 10, -- limit parallel git operations
+  concurrency = 4, -- limit parallel git operations
+  git = {
+    throttle = {
+      enabled = true,
+      rate = 2,        -- 2 git ops per window
+      duration = 5000, -- per 5 seconds
+    },
+  },
   performance = {
     rtp = {
       -- disable some rtp plugins
