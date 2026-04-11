@@ -41,6 +41,7 @@ require("lazy").setup({
     enabled = true, -- check for plugin updates periodically
     notify = false, -- notify on update
   }, -- automatically check for plugin updates
+  concurrency = 10, -- limit parallel git operations
   performance = {
     rtp = {
       -- disable some rtp plugins
