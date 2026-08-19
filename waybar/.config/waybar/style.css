@@ -30,12 +30,24 @@
   font-weight: bold;
 }
 
+tooltip {
+  background-color: rgba(26, 27, 38, 0.98); /* Tokyo Night bg */
+  border: 1px solid @blu;
+  border-radius: 8px;
+}
+
+tooltip label {
+  color: @fg;
+  padding: 4px;
+  font-family: monospace;
+}
+
 window#waybar {
   /* background-color: @bg; color: @fg; */
 
   color: @fg;
 
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(26, 27, 38, 0.97); /* Tokyo Night bg, near-opaque */
 }
 
 #workspaces button {
@@ -113,4 +125,44 @@ window#waybar {
 #custom-power {
   padding: 0 25px; /* aumenta el espacio arriba/abajo si está cortado */
   font-size: 1.4rem;
+}
+
+#custom-claude {
+  padding: 0 10px;
+  color: @grn; /* .low  */
+}
+
+#custom-claude.mid {
+  color: @ylw;
+}
+
+#custom-claude.high {
+  color: @red;
+}
+
+#custom-claude.idle {
+  color: @brblk;
+}
+
+/* Tunel mobidb. Conectado va en amarillo a proposito: es una sesion activa a
+   una DB de prod, tiene que verse, no volverse invisible y quedar olvidada. */
+#custom-mobidb {
+  padding: 0 10px;
+  color: @brblk;
+}
+
+#custom-mobidb.connected {
+  color: @ylw;
+}
+
+#custom-mobidb.disconnected {
+  color: @brblk;
+}
+
+#custom-mobidb.connecting {
+  color: @blu;
+}
+
+#custom-mobidb.error {
+  color: @red;
 }

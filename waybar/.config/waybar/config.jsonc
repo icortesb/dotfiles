@@ -10,6 +10,8 @@
   "modules-left": ["hyprland/workspaces"],
   "modules-center": ["clock"],
   "modules-right": [
+    "custom/mobidb",
+    "custom/claude",
     "tray",
     "custom/power",
   ],
@@ -44,6 +46,24 @@
     "format": "|",
     "interval": 0,
    "tooltip": false,
+  },
+  "custom/claude": {
+    "format": "{}",
+    "return-type": "json",
+    "exec": "~/.config/waybar/scripts/claude-usage.sh",
+    "interval": 180,
+    "on-click": "~/.config/waybar/scripts/claude-usage-notify.sh",
+  },
+  // Boton para el tunel SSM read-only a mobidb (ver ~/MDG/mdg-infra). Click
+  // abre login AWS + tunel en una kitty; click derecho cierra y hace logout.
+  "custom/mobidb": {
+    "format": "{}",
+    "return-type": "json",
+    "exec": "~/.config/waybar/scripts/mobidb-tunnel status",
+    "interval": 5,
+    "signal": 8,
+    "on-click": "~/.config/waybar/scripts/mobidb-tunnel connect",
+    "on-click-right": "~/.config/waybar/scripts/mobidb-tunnel disconnect",
   },
   "custom/power": {
     "format": "⏻",

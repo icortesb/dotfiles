@@ -116,3 +116,8 @@ export PATH="$PATH:$HOME/.local/bin"
 # opencode
 export PATH=$HOME/.opencode/bin:$PATH
 export PATH="$HOME/.config/composer/vendor/bin:$PATH"
+export PATH="$HOME/.npm-global/bin:$PATH"
+alias mdg-db='harlequin --config-path ~/.config/harlequin/config.toml --profile mdg-db'
+alias 3gproxy='echo -n "MediaDG@2026" | wl-copy'
+alias release='echo -n "[RELEASE][$(date +%F)]" | wl-copy >/dev/null 2>&1 && exit'
+alias bat='cat /sys/class/power_supply/BAT0/capacity'
