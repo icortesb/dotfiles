@@ -5,9 +5,90 @@
 
 ---
 
-## 1. Moving Between Files
+## Modes — the basics
 
-This is where you spend most of your time. Learn this first.
+Neovim is modal. You are always in one of these:
+
+| Mode | How to enter | What it does |
+|------|-------------|--------------|
+| **Normal** | `Escape` or `jk` | Navigate, run commands. Default mode. |
+| **Insert** | `i` (before cursor), `a` (after), `o` (new line below) | Type text |
+| **Visual** | `v` (char), `V` (line), `Ctrl+v` (block) | Select text |
+| **Command** | `:` | Run vim commands (`:w`, `:q`, etc.) |
+
+**Rule:** always go back to Normal with `Escape` or `jk`. Everything else starts from Normal.
+
+---
+
+## 1. Buffers and Tabs
+
+This is the most important mental model to get right.
+
+**What looks like tabs at the top are buffers.** Every file you open becomes a buffer. Bufferline shows them as a tab bar, but they are not tabs — they are all open in memory at the same time.
+
+```
+ index.ts   styles.css   api.ts      ← these are buffers, shown as tabs
+```
+
+You can have as many open as you want. Closing a buffer removes it from the bar.
+
+### Switching buffers
+| Key | Action |
+|-----|--------|
+| `Shift+h` | Go to previous buffer (left in the bar) |
+| `Shift+l` | Go to next buffer (right in the bar) |
+| `Space,` | Fuzzy search all open buffers by name |
+| `Space fb` | Same, in a picker |
+
+### Closing buffers
+| Key | Action |
+|-----|--------|
+| `Space w` | Save and close current buffer |
+| `Space q` | Close without saving |
+
+Closing a buffer does **not** close the window. Your layout stays intact.
+
+### Opening files into buffers
+Any time you open a file — from neo-tree, `Space ff`, `gd`, anywhere — it opens as a new buffer and appears in the tab bar automatically.
+
+---
+
+## 2. Windows and Splits
+
+A window is a panel on screen. You can have multiple windows showing different buffers side by side.
+
+### Splits — two files at once
+| Key | Action |
+|-----|--------|
+| `Space \|` | Split current window vertically |
+| `Space -` | Split current window horizontally |
+| `Space wd` | Close current window (buffer stays open) |
+
+**Workflow to open two files side by side:**
+1. Open first file normally
+2. Press `Space |` to split
+3. Press `Space ff` in the new panel to find your second file
+4. Use `Ctrl+h/l` to switch focus between them
+
+### Moving between windows
+| Key | Action |
+|-----|--------|
+| `Ctrl+h` | Focus window to the left |
+| `Ctrl+j` | Focus window below |
+| `Ctrl+k` | Focus window above |
+| `Ctrl+l` | Focus window to the right |
+
+### Resizing windows
+| Key | Action |
+|-----|--------|
+| `Alt+h` | Shrink window left |
+| `Alt+l` | Grow window right |
+| `Alt+j` | Shrink window down |
+| `Alt+k` | Grow window up |
+
+---
+
+## 3. Moving Between Files
 
 ### Harpoon — your active file set
 Mark the 3-4 files you're actively working on. Jump between them instantly.
@@ -28,28 +109,35 @@ Mark the 3-4 files you're actively working on. Jump between them instantly.
 | `Space ff` | Find file by name |
 | `Space fg` | Search text across all files |
 | `Space fr` | Recent files |
-| `Space fb` | Open buffers |
 | `Space fp` | Switch project |
 
-### File explorer
+### File explorer — neo-tree
 | Key | Action |
 |-----|--------|
 | `Space e` | Toggle neo-tree sidebar |
-| `Space cd` | Toggle neo-tree sidebar |
 
-Inside neo-tree: `a` create, `d` delete, `r` rename, `y` copy, `m` move, `?` all keys.
+**Focusing neo-tree when it's open:** press `Space e` again or `Ctrl+h` to move focus into it.
 
-### Buffers
+Inside neo-tree:
+
 | Key | Action |
 |-----|--------|
-| `Shift+h` | Previous buffer |
-| `Shift+l` | Next buffer |
-| `Space w` | Save and close buffer |
-| `Space q` | Close buffer without saving |
+| `j` / `k` | Move up/down |
+| `Enter` | Open file |
+| `l` | Expand folder / open file |
+| `h` | Collapse folder |
+| `s` | Open file in vertical split |
+| `a` | Create file or folder (end name with `/` for folder) |
+| `d` | Delete |
+| `r` | Rename |
+| `y` | Copy |
+| `m` | Move |
+| `q` | Close neo-tree |
+| `?` | Show all keybinds |
 
 ---
 
-## 2. Editing
+## 4. Editing
 
 ### Jumping anywhere — Flash
 The fastest way to move your cursor to any visible text.
@@ -60,6 +148,16 @@ The fastest way to move your cursor to any visible text.
 | `S` | Jump to a treesitter node (function, block, tag...) |
 
 Example: you see `backgroundColor` on line 40. Press `s`, type `ba`, pick the label. Done.
+
+### The `]` / `[` pattern
+Throughout the config, `]x` means "next x" and `[x` means "previous x". Works consistently for:
+
+| Key | Jumps to |
+|-----|----------|
+| `]d` / `[d` | Next / previous diagnostic (error, warning) |
+| `]h` / `[h` | Next / previous git hunk |
+| `]t` / `[t` | Next / previous TODO comment |
+| `]b` / `[b` | Next / previous buffer |
 
 ### Text objects — what you select, delete, change
 Works with `v` (visual), `d` (delete), `c` (change), `y` (yank):
@@ -101,16 +199,26 @@ Type your abbreviation then `Ctrl+y ,` to expand.
 | `a[href=#]` | `<a href="#"></a>` |
 | `p.title+span` | `<p class="title">` followed by `<span>` |
 
+### Yank history — Yanky
+Every time you copy (`y`) something it goes into a history. You can cycle through it after pasting.
+
+| Key | Action |
+|-----|--------|
+| `p` | Paste (as usual) |
+| `]p` | Cycle to next item in yank history (after pasting) |
+| `[p` | Cycle to previous item in yank history |
+| `Space p` | Browse full yank history in a picker |
+
 ### Undo
 | Key | Action |
 |-----|--------|
 | `u` | Undo |
 | `Ctrl+r` | Redo |
-| `Space u` | Open undotree — visual undo history, never lose a change |
+| `Space u` | Open undotree — full visual undo history, never lose a change |
 
 ---
 
-## 3. Code Intelligence (LSP)
+## 5. Code Intelligence (LSP)
 
 Works automatically for: TypeScript, JavaScript, Astro, Vue, PHP, Go, Bash, Lua.
 
@@ -143,29 +251,35 @@ Runs automatically. Formatters by file type:
 - **Go** → gofmt
 
 ### Completion
+Completion and Copilot both use `Tab`. Here is how they interact:
+
+- If a **Copilot** ghost suggestion is visible → `Tab` accepts the Copilot suggestion
+- If a **completion menu** is open → `Tab` / `Shift+Tab` navigate the menu, `Enter` accepts
+- If neither is showing → `Tab` inserts a tab character
+
 | Key | Action |
 |-----|--------|
 | `Ctrl+Space` | Trigger completion manually |
-| `Tab` / `Shift+Tab` | Navigate suggestions |
-| `Enter` | Accept suggestion |
-| `Ctrl+e` | Dismiss completion |
-| `Ctrl+b` / `Ctrl+f` | Scroll through docs |
+| `Tab` / `Shift+Tab` | Navigate completion menu |
+| `Enter` | Accept selected completion item |
+| `Ctrl+e` | Dismiss completion menu |
+| `Ctrl+b` / `Ctrl+f` | Scroll docs up/down |
 
 ---
 
-## 4. Copilot
+## 6. Copilot
 
 Suggestions appear automatically while you type. Ghost text shows in gray.
 
 | Key | Action |
 |-----|--------|
-| `Tab` | Accept full suggestion |
+| `Tab` | Accept full Copilot suggestion |
 | Keep typing | Ignore suggestion |
 | `Space tc` | Toggle Copilot on/off |
 
 ---
 
-## 5. Git
+## 7. Git
 
 ### Gitsigns — work with hunks without leaving the file
 A hunk is a block of changed lines.
@@ -204,7 +318,7 @@ Inside lazygit:
 
 ---
 
-## 6. Search & Replace
+## 8. Search & Replace
 
 | Key | Action |
 |-----|--------|
@@ -220,19 +334,7 @@ Inside lazygit:
 
 ---
 
-## 7. Windows & Layout
-
-| Key | Action |
-|-----|--------|
-| `Ctrl+h/j/k/l` | Move focus between windows |
-| `Alt+h/j/k/l` | Resize current window |
-| `Space \|` | Split vertically |
-| `Space -` | Split horizontally |
-| `Space wd` | Close window |
-
----
-
-## 8. TODO Comments
+## 9. TODO Comments
 
 Write `TODO:`, `FIXME:`, `HACK:`, `NOTE:`, `WARN:` anywhere in code — they get highlighted automatically.
 
@@ -244,7 +346,7 @@ Write `TODO:`, `FIXME:`, `HACK:`, `NOTE:`, `WARN:` anywhere in code — they get
 
 ---
 
-## 9. Diagnostics & Trouble
+## 10. Diagnostics & Trouble
 
 | Key | Action |
 |-----|--------|
@@ -255,25 +357,57 @@ Write `TODO:`, `FIXME:`, `HACK:`, `NOTE:`, `WARN:` anywhere in code — they get
 
 ---
 
-## 10. Sudo & Misc
+## 11. Terminal
 
-| Key / Command | Action |
+| Key | Action |
 |-----|--------|
+| `Space ft` | Open floating terminal |
+| `Space fT` | Open terminal in current directory |
+
+To exit the terminal and return to nvim: type `exit` to close it, or press `Ctrl+\` then `Ctrl+n` to go back to normal mode without closing it.
+
+---
+
+## 12. Maintenance
+
+These are commands you run occasionally to keep things working.
+
+| Command | What it does |
+|---------|-------------|
+| `:Lazy` | Open plugin manager — update, install, check status |
+| `:Lazy sync` | Install missing plugins + update all |
+| `:Mason` | Open LSP/formatter manager — install new language servers |
+| `:TSUpdate` | Update treesitter parsers (syntax highlighting) |
+| `:checkhealth` | Diagnose any setup issues |
 | `:w suda://%` | Save current file as sudo |
+
+---
+
+## 13. Misc
+
+| Key | Action |
+|-----|--------|
 | `Space u` | Undotree |
 | `gx` | Open URL under cursor in browser |
-| `Space ft` | Open floating terminal |
-| `Space fT` | Open terminal in current dir |
-| `Space,` | Switch buffer (fuzzy) |
+| `Space,` | Switch buffer by name |
 
 ---
 
 ## Cheat Sheet — Most Used Daily
 
 ```
+MODES             i         insert mode
+                  Escape    back to normal
+                  jk        back to normal (faster)
+
+BUFFERS           Shift+h/l prev/next buffer (tab)
+                  Space w   save and close
+                  Space,    switch buffer by name
+
 NAVIGATE          Space ff  find file
                   Space fg  grep text
                   Space fp  switch project
+                  Space e   file explorer
 
 HARPOON           Space a   mark file
                   Ctrl+e    mark list
@@ -296,6 +430,6 @@ GIT               Space gg  lazygit
                   Space ghs stage hunk
                   Space ghb blame line
 
-WINDOWS           Ctrl+hjkl move window
-                  Alt+hjkl  resize window
+SPLITS            Space |   split vertical
+                  Ctrl+h/l  move between panels
 ```
