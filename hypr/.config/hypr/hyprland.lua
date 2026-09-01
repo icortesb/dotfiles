@@ -16,7 +16,7 @@ require("monitors")
 
 local terminal     = "kitty"
 local fileManager   = "dolphin"
-local menu          = "wofi"
+local menu          = "walker"
 local reload_waybar = "pkill waybar; waybar &"
 
 
@@ -32,6 +32,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("hypridle &")
     hl.exec_cmd("/usr/lib/pam_kwallet_init")
     hl.exec_cmd("~/.config/hypr/scripts/smart-borders.sh &")
+    hl.exec_cmd("walker --gapplication-service")
 end)
 
 
@@ -195,6 +196,7 @@ hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("walker -m clipboard"))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(reload_waybar))
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd("~/.config/hypr/scripts/python_hypr_power.sh"))
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
@@ -311,5 +313,11 @@ hl.window_rule({
 hl.layer_rule({
     name  = "blur-gtk-layer-shell",
     match = { namespace = "gtk-layer-shell" },
+    blur  = true,
+})
+
+hl.layer_rule({
+    name  = "blur-walker",
+    match = { namespace = "walker" },
     blur  = true,
 })

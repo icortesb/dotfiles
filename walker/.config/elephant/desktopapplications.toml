@@ -1,0 +1,27 @@
+# Oculta entradas .desktop que no son apps de verdad (CLI wrappers, helpers,
+# duplicados). Patrones = regexp sobre el archivo .desktop.
+# Para volver a mostrar algo, borrá su línea y reiniciá: systemctl --user restart elephant
+
+blacklist = [
+  # CLI / TUI
+  "btop",
+  "htop",
+  "nvtop",
+  "nvim",
+  "vim",
+  "yazi",
+  "byobu",
+  "scrcpy-console",
+  # helpers internos / utilidades de test
+  "avahi-discover",
+  "bssh",
+  "bvnc",
+  "lstopo",
+  "qv4l2",
+  "qvidcap",
+  "xgps",
+  "uuctl",
+  "valve-vrmonitor",
+  # duplicado de SteamVR (queda SteamVR.desktop)
+  "valve-steamvr",
+]
