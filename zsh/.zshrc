@@ -121,3 +121,10 @@ alias mdg-db='harlequin --config-path ~/.config/harlequin/config.toml --profile 
 alias 3gproxy='echo -n "MediaDG@2026" | wl-copy'
 alias release='echo -n "[RELEASE][$(date +%F)]" | wl-copy >/dev/null 2>&1 && exit'
 alias bat='cat /sys/class/power_supply/BAT0/capacity'
+
+# Claude Code: si la versión que dejó el auto-update no arranca, cae sola a la
+# última que funcionaba. Ver ~/.local/bin/claude-seguro
+alias claude='claude-seguro'
+
+# zoxide
+eval "$(zoxide init zsh)"
