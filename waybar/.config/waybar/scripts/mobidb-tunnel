@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+MDG_INFRA="${MOBIDB_INFRA_DIR:-$HOME/MDG/mdg-infra}"
+AWS_PROFILE_NAME="${MOBIDB_AWS_PROFILE:-mdg-reader}"
+AWS_REGION_NAME="${MOBIDB_AWS_REGION:-us-west-2}"
+LOCAL_PORT=15432
+TUNNEL_SCRIPT="$MDG_INFRA/scripts/start-mobidb-tunnel.sh"
+
+OFFICE_SSIDS=("Casa Media Digital")
+
+RUN_DIR="${XDG_RUNTIME_DIR:-/tmp}"
+LOCK_FILE="$RUN_DIR/mobidb-tunnel.lock"
+LOG_FILE="$RUN_DIR/mobidb-tunnel.log"
+KEEPALIVE_INTERVAL_SECONDS="${MOBIDB_KEEPALIVE_SECONDS:-300}"
+
+readonly ICON_DB=$''
+readonly ICON_ERROR=$''
+
+detect_iface() {
+  if [[ -n "${MOBIDB_TEST_IFACE+x}" ]]; then printf '%s' "$MOBIDB_TEST_IFACE"; return 0; fi
+  local d
+  for d in /sys/class/net/*/wireless; do
+    [[ -e "$d" ]] || continue
+    basename "$(dirname "$d")"; return 0
+  done
+}
+
+detect_ssid() {
+  if [[ -n "${MOBIDB_TEST_SSID+x}" ]]; then printf '%s' "$MOBIDB_TEST_SSID"; return 0; fi
+  local iface=$1 ssid
+  ssid=$(iwctl station "$iface" show 2>/dev/null | sed -n 's/.*Connected network[[:space:]]\{2,\}//p' | sed 's/[[:space:]]*$//')
+  if [[ -z "$ssid" ]]; then
+    ssid=$(networkctl status "$iface" 2>/dev/null | sed -n 's/.*Wi-Fi access point:[[:space:]]*\(.*\)[[:space:]]*(.*/\1/p' | head -1 | sed 's/[[:space:]]*$//')
+  fi
+  printf '%s' "$ssid"
+}
+
+is_office_ssid() {
+  local ssid=$1 s
+  for s in "${OFFICE_SSIDS[@]}"; do [[ "$ssid" == "$s" ]] && return 0; done
+  return 1
+}
+
+tunnel_pid() { lsof -t -nP -iTCP:"$LOCAL_PORT" -sTCP:LISTEN 2>/dev/null | head -1; }
+
+connecting_pid() {
+  [[ -f "$LOCK_FILE" ]] || return 0
+  local pid; pid=$(cat "$LOCK_FILE" 2>/dev/null)
+  if [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null; then printf '%s' "$pid"; else rm -f "$LOCK_FILE"; fi
+}
+
+missing_requirement() {
+  [[ -x "$TUNNEL_SCRIPT" ]] || { printf 'no se encontro %s' "$TUNNEL_SCRIPT"; return 0; }
+  command -v aws >/dev/null 2>&1 || { printf 'falta aws cli'; return 0; }
+  command -v session-manager-plugin >/dev/null 2>&1 || { printf 'falta session-manager-plugin'; return 0; }
+  command -v lsof >/dev/null 2>&1 || { printf 'falta lsof'; return 0; }
+  printf ''
+}
+
+render_status() {
+  local pid problem text tooltip class
+  problem=$(missing_requirement)
+  if [[ -n "$problem" ]]; then
+    jq -nc --arg t "$ICON_ERROR  DB" --arg tip "mobidb tunnel: $problem" --arg c "error" '{text:$t,tooltip:$tip,class:$c}'
+    return 0
+  fi
+  pid=$(tunnel_pid)
+  if [[ -n "$pid" ]]; then
+    text="$ICON_DB  DB"; class="connected"
+    tooltip="tunel mobidb reader activo (127.0.0.1:$LOCAL_PORT)
+click derecho para cerrar y hacer logout (se cierra solo al volver a la oficina)"
+  elif [[ -n "$(connecting_pid)" ]]; then
+    text="$ICON_DB  DB…"; class="connecting"
+    tooltip="conectando: completa el MFA en el navegador"
+  else
+    text="$ICON_DB  DB"; class="disconnected"
+    tooltip="click para conectar"
+  fi
+  jq -nc --arg t "$text" --arg tip "$tooltip" --arg c "$class" '{text:$t,tooltip:$tip,class:$c}'
+}
+
+refresh_waybar() { pkill -RTMIN+8 waybar 2>/dev/null; return 0; }
+
+_keepalive() {
+  local watch_pid=$1
+  while kill -0 "$watch_pid" 2>/dev/null; do
+    sleep "$KEEPALIVE_INTERVAL_SECONDS"
+    kill -0 "$watch_pid" 2>/dev/null || break
+    timeout 3 bash -c "exec 3<>/dev/tcp/127.0.0.1/$LOCAL_PORT" 2>/dev/null
+  done
+}
+
+_connect_worker() {
+  printf '%s' "$$" >"$LOCK_FILE"
+  exec >>"$LOG_FILE" 2>&1 </dev/null
+  printf '=== %s conectando ===\n' "$(date -Iseconds)"
+  if ! aws login --profile "$AWS_PROFILE_NAME" --region "$AWS_REGION_NAME"; then
+    rm -f "$LOCK_FILE"
+    notify-send -i dialog-error "mobidb" "Fallo el login AWS, ver $LOG_FILE" 2>/dev/null
+    refresh_waybar
+    return 1
+  fi
+  notify-send -i dialog-information "mobidb" "Login ok, abriendo tunel..." 2>/dev/null
+  refresh_waybar
+  AWS_PROFILE="$AWS_PROFILE_NAME" "$TUNNEL_SCRIPT" reader &
+  local session_pid=$!
+  _keepalive "$session_pid" &
+  local keepalive_pid=$!
+  wait "$session_pid"
+  local rc=$?
+  kill "$keepalive_pid" 2>/dev/null
+  rm -f "$LOCK_FILE"
+  refresh_waybar
+  return "$rc"
+}
+
+do_connect() {
+  if [[ -n "$(tunnel_pid)" || -n "$(connecting_pid)" ]]; then return 0; fi
+  notify-send -i dialog-information "mobidb" "Conectando: completa el MFA en el navegador" 2>/dev/null
+  setsid "$0" _connect_worker </dev/null >/dev/null 2>&1 &
+  disown
+  refresh_waybar
+}
+
+do_disconnect() {
+  local pid; pid=$(tunnel_pid)
+  [[ -n "$pid" ]] && kill -INT "$pid" 2>/dev/null
+  aws logout --profile "$AWS_PROFILE_NAME" >/dev/null 2>&1
+  notify-send -i dialog-information "mobidb" "Tunel cerrado" 2>/dev/null
+  refresh_waybar
+}
+
+do_enforce() {
+  local iface ssid
+  iface=$(detect_iface); [[ -z "$iface" ]] && return 0
+  ssid=$(detect_ssid "$iface"); [[ -z "$ssid" ]] && return 0
+  is_office_ssid "$ssid" && [[ -n "$(tunnel_pid)" ]] && do_disconnect
+  return 0
+}
+
+main() {
+  case "${1:-status}" in
+    status) render_status ;;
+    connect) do_connect ;;
+    disconnect) do_disconnect ;;
+    enforce) do_enforce ;;
+    _connect_worker) _connect_worker ;;
+    *) printf 'uso: %s {status|connect|disconnect|enforce}\n' "${0##*/}" >&2; return 2 ;;
+  esac
+}
+
+main "$@"

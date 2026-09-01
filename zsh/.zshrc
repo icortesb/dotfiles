@@ -118,13 +118,23 @@ export PATH=$HOME/.opencode/bin:$PATH
 export PATH="$HOME/.config/composer/vendor/bin:$PATH"
 export PATH="$HOME/.npm-global/bin:$PATH"
 alias mdg-db='harlequin --config-path ~/.config/harlequin/config.toml --profile mdg-db'
-alias 3gproxy='echo -n "MediaDG@2026" | wl-copy'
+alias 3gproxy="echo -n \"Km8S''iR3p*p0cS+9{'V?8-00eE£6)\" | wl-copy"
 alias release='echo -n "[RELEASE][$(date +%F)]" | wl-copy >/dev/null 2>&1 && exit'
-alias bat='cat /sys/class/power_supply/BAT0/capacity'
+bat() {
+  local pct=$(< /sys/class/power_supply/BAT0/capacity)
+  local st=$(< /sys/class/power_supply/BAT0/status)
+  if [[ $st == Charging ]]; then
+    print "${pct}% charging"
+  else
+    print "${pct}%"
+  fi
+}
 
 # Claude Code: si la versión que dejó el auto-update no arranca, cae sola a la
 # última que funcionaba. Ver ~/.local/bin/claude-seguro
 alias claude='claude-seguro'
+
+export PATH="$HOME/go/bin:$PATH"
 
 # zoxide
 eval "$(zoxide init zsh)"
