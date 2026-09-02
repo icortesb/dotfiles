@@ -204,6 +204,25 @@ yay -Rns ags-hyprpanel-git && yay -Yc                 # remove HyprPanel + orpha
 git -C ~/.dotfiles revert <hyprpanel commit>          # undo the dotfiles changes
 ```
 
+## Known upstream bugs (patched locally)
+
+- **Empty notification action-button** — HyprPanel renders a blank button for
+  any notification action with an empty `id`/`label`. Visible on every Claude
+  Code permission prompt (it attaches an unlabeled default click-to-focus
+  action). Upstream fix ([HyprPanel#1181](https://github.com/Jas-SinghFSU/HyprPanel/pull/1181))
+  was closed unmerged when the project archived in favor of a Rust/GTK4
+  rewrite, [Wayle](https://github.com/wayle-rs/wayle) — no future
+  `ags-hyprpanel-git` release will ever ship it, so it's patched locally:
+
+  ```sh
+  sudo ~/.config/hyprpanel/scripts/patch-empty-action-buttons.sh
+  hyprpanel -q; hyprpanel
+  ```
+
+  Idempotent (no-ops if already patched). **Re-run after every
+  `ags-hyprpanel-git` update** — pacman/yay overwrite
+  `/usr/share/hyprpanel/hyprpanel-app` wholesale and silently revert it.
+
 ## Known cosmetic log noise (harmless)
 
 - `No supported GPU monitoring tool found` — install `python-gpustat` if you want GPU stats.
