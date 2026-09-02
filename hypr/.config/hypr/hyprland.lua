@@ -17,7 +17,7 @@ require("monitors")
 local terminal     = "kitty"
 local fileManager   = "dolphin"
 local menu          = "walker"
-local reload_waybar = "pkill waybar; waybar &"
+local reload_panel  = "hyprpanel -q; hyprpanel"
 
 
 -------------------
@@ -26,9 +26,8 @@ local reload_waybar = "pkill waybar; waybar &"
 
 hl.on("hyprland.start", function()
     hl.exec_cmd("awww-daemon &")
-    hl.exec_cmd("awww img /home/icortesb/walls/wall1.png")
-    hl.exec_cmd("waybar &")
-    hl.exec_cmd("swaync &")
+    hl.exec_cmd("awww img " .. os.getenv("HOME") .. "/walls/wall1.png")
+    hl.exec_cmd(os.getenv("HOME") .. "/.config/hyprpanel/generate.sh; hyprpanel")
     hl.exec_cmd("hypridle &")
     hl.exec_cmd("/usr/lib/pam_kwallet_init")
     hl.exec_cmd("~/.config/hypr/scripts/smart-borders.sh &")
@@ -197,7 +196,7 @@ hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("walker -m clipboard"))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(reload_waybar))
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(reload_panel))
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd("~/.config/hypr/scripts/python_hypr_power.sh"))
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
 hl.bind("SUPER + L", hl.dsp.exec_cmd("/usr/bin/hyprlock --grace 3"))
@@ -235,7 +234,7 @@ hl.bind(mainMod .. " + SHIFT + V", function()
 end)
 
 -- Notificaciones
-hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t"))
+hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("hyprpanel toggleWindow notificationsmenu"))
 
 -- Workspace back and forth
 hl.bind(mainMod .. " + comma",  hl.dsp.focus({ workspace = "e-1" }))
@@ -319,5 +318,11 @@ hl.layer_rule({
 hl.layer_rule({
     name  = "blur-walker",
     match = { namespace = "walker" },
+    blur  = true,
+})
+
+hl.layer_rule({
+    name  = "blur-hyprpanel",
+    match = { namespace = "bar-.*" },
     blur  = true,
 })
