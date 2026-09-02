@@ -6,16 +6,18 @@
 #   wallpaper.sh next       random image
 #   wallpaper.sh prev       step back through history
 #
-# Pool:  $WALLPAPER_DIR or ~/Pictures/wallpapers (or its images/ subdir)
-# State: ~/.cache/wallpaper-history
-# Favs:  ~/.config/hyprpanel/wallpaper-favs  (basenames — synced via dotfiles)
+# Pool:   $WALLPAPER_DIR or ~/Pictures/wallpapers (or its images/ subdir)
+# Thumbs: ~/.cache/wallpaper-thumbs/<md5 of full path>.png  (built on demand)
+# State:  ~/.cache/wallpaper-history
+# Favs:   ~/.config/hyprpanel/wallpaper-favs  (basenames — synced via dotfiles)
 set -o pipefail
 
 dir="${WALLPAPER_DIR:-$HOME/Pictures/wallpapers}"
 [ -d "$dir/images" ] && dir="$dir/images"
 hist="$HOME/.cache/wallpaper-history"
+thumbs="$HOME/.cache/wallpaper-thumbs"
 appdir="$HOME/.config/hyprpanel/wallpaper-picker"
-mkdir -p "$(dirname "$hist")" "$HOME/.config/hyprpanel"
+mkdir -p "$(dirname "$hist")" "$thumbs" "$HOME/.config/hyprpanel"
 touch "$hist" "$HOME/.config/hyprpanel/wallpaper-favs"
 
 imgs() {
@@ -26,6 +28,18 @@ apply() {
   [ -n "$1" ] && [ -f "$1" ] || { notify-send "Wallpaper" "Not found: ${1:-<none>}"; return 1; }
   hyprpanel setWallpaper "$1" || return 1
   [ "$(tail -n1 "$hist" 2>/dev/null)" = "$1" ] || printf '%s\n' "$1" >> "$hist"
+}
+build_thumbs() {
+  local missing
+  missing="$(imgs | while IFS= read -r f; do
+    k="$(printf '%s' "$f" | md5sum | cut -c1-32)"
+    { [ -f "$thumbs/$k.png" ] && [ ! "$f" -nt "$thumbs/$k.png" ]; } || printf '%s\n' "$f"
+  done)"
+  [ -z "$missing" ] && return
+  notify-send -t 2500 "Wallpaper" "Preparing thumbnails…"
+  printf '%s\n' "$missing" | xargs -r -P"$(nproc)" -I{} sh -c '
+    k=$(printf "%s" "{}" | md5sum | cut -c1-32)
+    magick "{}" -thumbnail 520x293^ -gravity center -extent 520x293 -quality 82 "'"$thumbs"'/$k.png" 2>/dev/null'
 }
 open_picker() {  # $1: optional "favs"
   if pgrep -f "qs -p $appdir" >/dev/null 2>&1; then
@@ -43,9 +57,9 @@ case "${1:-menu}" in
     sed -i '$d' "$hist"; apply "$(tail -n1 "$hist")" ;;
   menu)
     [ -n "$(imgs)" ] || { notify-send "Wallpaper" "No images in $dir"; exit 0; }
-    open_picker ;;
+    build_thumbs; open_picker ;;
   favs|fav)
-    open_picker favs ;;
+    build_thumbs; open_picker favs ;;
   *)
     echo "usage: wallpaper.sh [menu|favs|next|prev]" >&2; exit 2 ;;
 esac

@@ -12,6 +12,7 @@ ShellRoot {
 
     readonly property string home: Quickshell.env("HOME")
     readonly property string favPath: home + "/.config/hyprpanel/wallpaper-favs"
+    readonly property string thumbDir: home + "/.cache/wallpaper-thumbs"
     readonly property string poolA: home + "/Pictures/wallpapers/images"
     readonly property string poolB: home + "/Pictures/wallpapers"
 
@@ -21,6 +22,7 @@ ShellRoot {
 
     function baseName(p) { return p.substring(p.lastIndexOf("/") + 1) }
     function isFav(p) { return favNames[baseName(p)] === true }
+    function thumbFor(p) { return "file://" + thumbDir + "/" + Qt.md5(p) + ".png" }
 
     readonly property var shown: tab === "favs"
         ? allPaths.filter(p => isFav(p))
@@ -97,46 +99,48 @@ ShellRoot {
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
         WlrLayershell.namespace: "wallpaper-picker"
 
-        // click the dimmed backdrop to dismiss
         Rectangle {
             anchors.fill: parent
-            color: "#66000000"
+            color: "#00000073"
             MouseArea { anchors.fill: parent; onClicked: Qt.quit() }
         }
 
         Rectangle {
             id: panel
             anchors.centerIn: parent
-            width: Math.min(parent.width - 120, 1320)
-            height: Math.min(parent.height - 120, 820)
-            radius: 18
+            width: Math.min(parent.width - 120, 1360)
+            height: Math.min(parent.height - 120, 840)
+            radius: 20
             color: "#2e3440"
-            border.width: 2
-            border.color: "#3b4252"
-            // swallow clicks so they don't hit the backdrop
+            border.width: 1
+            border.color: "#434c5e"
+
             MouseArea { anchors.fill: parent }
 
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 18
-                spacing: 14
+                anchors.margins: 20
+                spacing: 16
 
                 RowLayout {
                     Layout.alignment: Qt.AlignHCenter
-                    spacing: 8
+                    spacing: 10
                     Repeater {
                         model: [{ key: "all", label: "All" },
-                                { key: "favs", label: "★ Favourites" }]
+                                { key: "favs", label: "★  Favourites" }]
                         delegate: Rectangle {
                             radius: height / 2
-                            implicitHeight: 40
-                            implicitWidth: tl.implicitWidth + 40
+                            implicitHeight: 42
+                            implicitWidth: tl.implicitWidth + 44
                             color: root.tab === modelData.key ? "#88c0d0" : "#3b4252"
+                            Behavior on color { ColorAnimation { duration: 110 } }
                             Text {
                                 id: tl
                                 anchors.centerIn: parent
                                 text: modelData.label
-                                font.pixelSize: 15
+                                font.family: "JetBrainsMono Nerd Font"
+                                font.pixelSize: 14
+                                font.weight: Font.DemiBold
                                 color: root.tab === modelData.key ? "#2e3440" : "#d8dee9"
                             }
                             MouseArea {
@@ -153,10 +157,10 @@ ShellRoot {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     clip: true
-                    readonly property int cols: Math.max(1, Math.floor(width / 320))
+                    readonly property int cols: Math.max(2, Math.floor(width / 330))
                     cellWidth: Math.floor(width / cols)
-                    cellHeight: Math.floor(cellWidth * 9 / 16)
-                    cacheBuffer: 800
+                    cellHeight: Math.floor(cellWidth * 10 / 16)
+                    cacheBuffer: 1200
                     boundsBehavior: Flickable.StopAtBounds
                     model: root.shown
 
@@ -165,80 +169,101 @@ ShellRoot {
                         height: grid.cellHeight
 
                         Rectangle {
+                            id: card
                             anchors.fill: parent
-                            anchors.margins: 6
-                            radius: 14
+                            anchors.margins: 7
+                            radius: 16
                             clip: true
-                            color: "#3b4252"
-                            border.width: 3
-                            border.color: root.isFav(modelData) ? "#bf616a" : "transparent"
+                            color: "#363d4d"
+                            border.width: root.isFav(modelData) ? 3 : 0
+                            border.color: "#bf616a"
 
                             Image {
                                 id: pic
                                 anchors.fill: parent
-                                source: "file://" + modelData
-                                sourceSize.width: 560
+                                source: root.thumbFor(modelData)
                                 fillMode: Image.PreserveAspectCrop
                                 asynchronous: true
-                                cache: false
+                                cache: true
+                                sourceSize.width: 520
+                                opacity: status === Image.Ready ? 1 : 0
+                                Behavior on opacity { NumberAnimation { duration: 160 } }
                             }
                             MultiEffect {
                                 anchors.fill: pic
                                 source: pic
-                                visible: hh.hovered
+                                visible: hh.hovered && pic.status === Image.Ready
                                 blurEnabled: true
                                 blur: 1.0
-                                blurMax: 48
+                                blurMax: 40
                             }
+                            // dim + bottom gradient so controls read against any image
                             Rectangle {
                                 anchors.fill: parent
-                                color: "#5c000000"
                                 opacity: hh.hovered ? 1 : 0
-                                Behavior on opacity { NumberAnimation { duration: 110 } }
+                                Behavior on opacity { NumberAnimation { duration: 120 } }
+                                gradient: Gradient {
+                                    GradientStop { position: 0.0; color: "#1c222dbb" }
+                                    GradientStop { position: 0.55; color: "#1c222d55" }
+                                    GradientStop { position: 1.0; color: "#1c222de6" }
+                                }
                             }
+
+                            // ---- hover controls: two matching round buttons ----
                             Row {
-                                anchors.centerIn: parent
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.bottom: parent.bottom
+                                anchors.bottomMargin: 14
                                 spacing: 12
                                 opacity: hh.hovered ? 1 : 0
-                                Behavior on opacity { NumberAnimation { duration: 110 } }
+                                y: hh.hovered ? 0 : 10
+                                Behavior on opacity { NumberAnimation { duration: 130; easing.type: Easing.OutCubic } }
+                                Behavior on y { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
 
-                                Rectangle {
-                                    radius: height / 2
-                                    height: 46; width: 58
-                                    color: hMa.containsMouse ? "#88c0d0"
-                                           : root.isFav(modelData) ? "#bf616a" : "#2e3440ee"
-                                    border.width: 2; border.color: "#d8dee930"
+                                component PillButton: Rectangle {
+                                    property alias hovered: pbMa.containsMouse
+                                    property string glyph: ""
+                                    property color activeColor: "#88c0d0"
+                                    property color restColor: "#d8dee9"
+                                    signal activated()
+                                    width: 46; height: 46; radius: 23
+                                    color: pbMa.containsMouse ? activeColor : "#2e3440"
+                                    border.width: pbMa.containsMouse ? 0 : 1
+                                    border.color: "#5c667a"
+                                    Behavior on color { ColorAnimation { duration: 90 } }
+                                    layer.enabled: true
+                                    layer.effect: MultiEffect {
+                                        shadowEnabled: true; shadowColor: "#000000"
+                                        shadowOpacity: 0.45; shadowBlur: 0.5; shadowVerticalOffset: 3
+                                    }
                                     Text {
                                         anchors.centerIn: parent
-                                        text: root.isFav(modelData) ? "♥" : "♡"
-                                        font.pixelSize: 19; color: "#eceff4"
+                                        text: parent.glyph
+                                        font.family: "JetBrainsMono Nerd Font"
+                                        font.pixelSize: 19
+                                        color: parent.hovered ? "#1a1b26" : parent.restColor
                                     }
                                     MouseArea {
-                                        id: hMa
+                                        id: pbMa
                                         anchors.fill: parent
                                         hoverEnabled: true
                                         cursorShape: Qt.PointingHandCursor
-                                        onClicked: root.toggleFav(modelData)
+                                        onClicked: parent.activated()
                                     }
                                 }
-                                Rectangle {
-                                    radius: height / 2
-                                    height: 46; width: sl.implicitWidth + 44
-                                    color: sMa.containsMouse ? "#88c0d0" : "#2e3440ee"
-                                    border.width: 2; border.color: "#d8dee930"
-                                    Text {
-                                        id: sl
-                                        anchors.centerIn: parent
-                                        text: "Set"; font.pixelSize: 16
-                                        color: sMa.containsMouse ? "#2e3440" : "#eceff4"
-                                    }
-                                    MouseArea {
-                                        id: sMa
-                                        anchors.fill: parent
-                                        hoverEnabled: true
-                                        cursorShape: Qt.PointingHandCursor
-                                        onClicked: root.apply(modelData)
-                                    }
+
+                                // favourite
+                                PillButton {
+                                    glyph: root.isFav(modelData) ? "♥" : "♡"
+                                    activeColor: "#e06c75"
+                                    restColor: root.isFav(modelData) ? "#e06c75" : "#d8dee9"
+                                    onActivated: root.toggleFav(modelData)
+                                }
+                                // apply
+                                PillButton {
+                                    glyph: ""   // nf check
+                                    activeColor: "#88c0d0"
+                                    onActivated: root.apply(modelData)
                                 }
                             }
                             HoverHandler { id: hh }
@@ -249,6 +274,7 @@ ShellRoot {
                         anchors.centerIn: parent
                         visible: grid.count === 0
                         color: "#7b88a1"
+                        font.family: "JetBrainsMono Nerd Font"
                         font.pixelSize: 15
                         text: root.tab === "favs"
                             ? "no favourites yet — hover a wallpaper and tap ♡"
