@@ -138,3 +138,6 @@ export PATH="$HOME/go/bin:$PATH"
 
 # zoxide
 eval "$(zoxide init zsh)"
+
+# Per-machine overrides (untracked, not synced across machines)
+[[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
