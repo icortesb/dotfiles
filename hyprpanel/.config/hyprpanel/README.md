@@ -23,7 +23,7 @@ sudo pacman -S --needed jq nodejs awww imagemagick brightnessctl pacman-contrib 
                         ttf-jetbrains-mono-nerd
 
 # HyprPanel + the Astal stack + screenshot helper (AUR)
-yay -S ags-hyprpanel-git grimblast-git
+yay -S ags-hyprpanel-git grimblast-git quickshell
 ```
 
 `ags-hyprpanel-git` pulls the rest of the Astal stack
@@ -93,22 +93,22 @@ Changing it:
 
 ```sh
 hyprpanel setWallpaper /path/to/img.png            # one image, with transition
-~/.config/hyprpanel/scripts/wallpaper.sh           # AGS picker (see below)
+~/.config/hyprpanel/scripts/wallpaper.sh           # picker (see below)
 ~/.config/hyprpanel/scripts/wallpaper.sh favs      # picker, Favourites tab
 ~/.config/hyprpanel/scripts/wallpaper.sh next|prev # random / step back (history)
 ```
 
-**The picker** is a small AGS/Astal GTK3 app in `wallpaper-picker/` (an `ags`
-project — `node_modules/` are symlinks into `/usr/share/ags/js`, tracked; only
-`@girs/` is git-ignored). Nord themed, thumbnail grid, **All / ★ Favourites**
-tabs. Hover a wallpaper → it blurs and two pills appear: **♥** (toggle
-favourite) and **Set** (apply + close). `Esc` closes. Favourites →
-`~/.config/hyprpanel/wallpaper-favs` (basenames, tracked → synced).
+**The picker** is a Quickshell config: `wallpaper-picker/shell.qml`. Centered
+overlay window, Nord themed, **All / ★ Favourites** tabs, a virtualised
+`GridView` (only visible thumbnails load, so it stays smooth with hundreds).
+Hover a wallpaper → it blurs (GPU) and two pills appear: **♥** (toggle
+favourite) and **Set** (apply + close). `Esc` or a backdrop click closes.
+Favourites → `~/.config/hyprpanel/wallpaper-favs` (basenames, tracked → synced).
 
-`wallpaper.sh` runs `ags run -d wallpaper-picker` (toggles the instance).
-Thumbnails + blurred variants (`<sha>.png` / `<sha>_b.png`) are built into
-`~/.cache/wallpaper-thumbs/` on first run. Needs `magick` (imagemagick) and
-`ags` (already a HyprPanel dep).
+`wallpaper.sh menu|favs` runs `qs -p wallpaper-picker` and toggles the
+instance; `favs` opens the Favourites tab via `WP_TAB=favs`. Needs
+**`quickshell`** (`yay -S quickshell`). No thumbnail cache — Qt loads each
+image downscaled and only for visible cells.
 
 Wallpaper pool: `~/Pictures/wallpapers` (or its `images/` subdir), e.g.
 `git clone --depth 1 https://github.com/D3Ext/aesthetic-wallpapers ~/Pictures/wallpapers`.
