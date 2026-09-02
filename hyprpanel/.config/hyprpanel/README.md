@@ -117,6 +117,7 @@ Degrades to `-` / cached data on any failure; 429s are normal and silent.
 | Super+N | `hyprpanel toggleWindow notificationsmenu` (was `swaync-client -t`) |
 | Super+R | restart HyprPanel (was reload waybar) |
 | Super+G | `scripts/dirjump.sh` — zoxide frecency → walker dmenu → open dir |
+| Super+Shift+W | `scripts/wallpaper-cycle.sh` — random wallpaper from `~/Pictures/wallpapers` |
 
 Blur: `hl.layer_rule` for namespace `bar-.*`.
 

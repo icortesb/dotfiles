@@ -481,9 +481,9 @@
   "menus.dashboard.shortcuts.left.shortcut3.command": "spotify",
   "menus.dashboard.shortcuts.left.shortcut3.tooltip": "Spotify",
   "menus.dashboard.shortcuts.left.shortcut3.icon": "󰓇",
-  "menus.dashboard.shortcuts.left.shortcut4.command": "walker",
-  "menus.dashboard.shortcuts.left.shortcut4.tooltip": "Apps (Walker)",
-  "menus.dashboard.shortcuts.left.shortcut4.icon": "󰀻",
+  "menus.dashboard.shortcuts.left.shortcut4.command": "/home/icortes/.config/hyprpanel/scripts/dirjump.sh",
+  "menus.dashboard.shortcuts.left.shortcut4.tooltip": "Jump to directory (zoxide)",
+  "menus.dashboard.shortcuts.left.shortcut4.icon": "󰥨",
   "menus.dashboard.directories.left.directory1.label": "󰚝  Dev",
   "menus.dashboard.directories.left.directory1.command": "bash -c \"xdg-open $HOME/Dev/\"",
   "menus.dashboard.directories.left.directory2.label": "󰉍  Downloads",
@@ -506,5 +506,6 @@
   "theme.bar.buttons.modules.claude.icon": "#81a1c1",
   "theme.bar.buttons.modules.claude.border": "#81a1c1",
   "menus.clock.weather.unit": "metric",
-  "menus.clock.weather.location": "Buenos Aires"
+  "menus.clock.weather.location": "Buenos Aires",
+  "menus.clock.weather.enabled": false
 }
