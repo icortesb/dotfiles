@@ -499,5 +499,12 @@
   "bar.customModules.updates.leftClick": "kitty -e yay -Syu",
   "wallpaper.enable": true,
   "wallpaper.image": "",
-  "notifications.position": "top right"
+  "notifications.position": "top right",
+  "theme.bar.buttons.modules.claude.background": "#3b4252",
+  "theme.bar.buttons.modules.claude.icon_background": "#81a1c1",
+  "theme.bar.buttons.modules.claude.text": "#81a1c1",
+  "theme.bar.buttons.modules.claude.icon": "#81a1c1",
+  "theme.bar.buttons.modules.claude.border": "#81a1c1",
+  "menus.clock.weather.unit": "metric",
+  "menus.clock.weather.location": "Buenos Aires"
 }

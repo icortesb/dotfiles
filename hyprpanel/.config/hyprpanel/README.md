@@ -116,8 +116,13 @@ Degrades to `-` / cached data on any failure; 429s are normal and silent.
 |-----|-----|
 | Super+N | `hyprpanel toggleWindow notificationsmenu` (was `swaync-client -t`) |
 | Super+R | restart HyprPanel (was reload waybar) |
+| Super+G | `scripts/dirjump.sh` — zoxide frecency → walker dmenu → open dir |
 
 Blur: `hl.layer_rule` for namespace `bar-.*`.
+
+> **`hyprctl reload` does NOT re-run the native Lua config.** After editing
+> `hyprland.lua` you must log out / back in for keybinds, layer rules and the
+> autostart block to take effect.
 
 ---
 

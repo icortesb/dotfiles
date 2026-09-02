@@ -243,6 +243,7 @@ hl.bind(mainMod .. " + period", hl.dsp.focus({ workspace = "e+1" }))
 -- Programs shortcut
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("brave"))
 hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("kitty -e nvim ."))
+hl.bind(mainMod .. " + G", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/hyprpanel/scripts/dirjump.sh"))
 
 -- Move windows
 hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.window.move({ direction = "left" }))
