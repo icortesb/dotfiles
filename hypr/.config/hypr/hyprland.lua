@@ -32,6 +32,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("hypridle &")
     hl.exec_cmd("/usr/lib/pam_kwallet_init")
     hl.exec_cmd("~/.config/hypr/scripts/smart-borders.sh &")
+    hl.exec_cmd("systemctl --user start elephant.service")
     hl.exec_cmd("walker --gapplication-service")
 end)
 
