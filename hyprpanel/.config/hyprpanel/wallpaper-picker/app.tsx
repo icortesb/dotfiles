@@ -1,15 +1,17 @@
-// Wallpaper picker — AGS/Astal (GTK3). Run: ags run -d <dir> [-- favs]
+// Wallpaper picker — AGS/Astal (GTK3).  ags run -d <dir> [-- favs]
 import app from "ags/gtk3/app"
 import { Astal, Gtk, Gdk } from "ags/gtk3"
 import { execAsync } from "ags/process"
 import GLib from "gi://GLib"
 import Gio from "gi://Gio"
+import GdkPixbuf from "gi://GdkPixbuf"
 
 const HOME    = GLib.get_home_dir()
 const POOLS   = [`${HOME}/Pictures/wallpapers/images`, `${HOME}/Pictures/wallpapers`]
 const THUMBS  = `${HOME}/.cache/wallpaper-thumbs`
 const HIST    = `${HOME}/.cache/wallpaper-history`
 const FAVFILE = `${HOME}/.config/hyprpanel/wallpaper-favs`
+const CW = 340, CH = 191
 const dec = new TextDecoder()
 
 function readLines(f: string): string[] {
@@ -47,7 +49,7 @@ const thumbOf = (p: string) => `${THUMBS}/${sha(p)}.png`
 const blurOf  = (p: string) => `${THUMBS}/${sha(p)}_b.png`
 const base    = (p: string) => GLib.path_get_basename(p)
 
-let favSet = new Set(readLines(FAVFILE))
+const favSet = new Set(readLines(FAVFILE))
 const isFav = (p: string) => favSet.has(base(p))
 function toggleFav(p: string) {
   favSet.has(base(p)) ? favSet.delete(base(p)) : favSet.add(base(p))
@@ -61,8 +63,8 @@ function applyWallpaper(p: string) {
 function ensureBlur(p: string) {
   if (GLib.file_test(blurOf(p), GLib.FileTest.EXISTS)) return
   const src = GLib.file_test(thumbOf(p), GLib.FileTest.EXISTS) ? thumbOf(p) : p
-  execAsync(["magick", src, "-thumbnail", "400x225^", "-gravity", "center",
-    "-extent", "400x225", "-blur", "0x12", blurOf(p)]).catch(() => {})
+  execAsync(["magick", src, "-thumbnail", `${CW}x${CH}^`, "-gravity", "center",
+    "-extent", `${CW}x${CH}`, "-blur", "0x12", blurOf(p)]).catch(() => {})
 }
 
 const CSS = `
@@ -76,55 +78,40 @@ const CSS = `
 .wp-tab.active { background-color: #88c0d0; color: #2e3440; }
 .wp-empty { color: #7b88a1; padding: 60px; }
 scrolledwindow.wp-scroll, flowbox.wp-grid, flowboxchild { background-color: transparent; }
-flowboxchild { padding: 8px; }
-.wp-card { border-radius: 16px; border: 3px solid transparent; }
+flowboxchild { padding: 7px; }
+.wp-card { border-radius: 15px; border: 3px solid transparent; background-color: #3b4252; }
 .wp-card.fav { border-color: #bf616a; }
-.wp-img, .wp-blur { border-radius: 13px; min-width: 300px; min-height: 169px;
-  background-size: cover; background-position: center; }
-.wp-blur, .wp-scrim, .wp-pills { opacity: 0; transition: opacity 180ms ease; }
-.wp-scrim { border-radius: 13px; background-color: rgba(30,34,42,0.30); }
-.wp-ov:hover .wp-blur, .wp-ov:hover .wp-scrim, .wp-ov:hover .wp-pills { opacity: 1; }
-.pill { background-color: rgba(46,52,64,0.92); color: #eceff4; font-size: 15px;
-  border-radius: 999px; padding: 9px 18px; margin: 0 6px;
-  border: 2px solid rgba(216,222,233,0.18); }
+.wp-blur, .wp-scrim, .wp-pills { opacity: 0; transition: opacity 140ms ease; }
+.wp-scrim { background-color: rgba(30,34,42,0.28); }
+.wp-card.hover .wp-blur,
+.wp-card.hover .wp-scrim,
+.wp-card.hover .wp-pills { opacity: 1; }
+.pill { background-color: rgba(46,52,64,0.94); color: #eceff4; font-size: 16px;
+  border-radius: 999px; padding: 10px 20px; margin: 0 7px;
+  border: 2px solid rgba(216,222,233,0.20); }
 .pill:hover { background-color: #88c0d0; color: #2e3440; border-color: #88c0d0; }
 .pill.heart.on { background-color: #bf616a; color: #eceff4; border-color: #bf616a; }
 `
 
-function bgProvider(cls: string, file: string): Gtk.CssProvider {
-  const p = new Gtk.CssProvider()
-  const css = `.${cls}{background-image:url("file://${file}");}`
-  try { (p as any).load_from_data(css) }
-  catch { (p as any).load_from_data(new TextEncoder().encode(css)) }
-  return p
-}
-function addBg(w: Gtk.Widget, cls: string, file: string) {
-  w.get_style_context().add_class(cls)
-  w.get_style_context().add_provider(bgProvider(cls, file), Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+function pic(file: string, cls: string): Gtk.Image {
+  const im = new Gtk.Image()
+  im.get_style_context().add_class(cls)
+  try { im.set_from_pixbuf(GdkPixbuf.Pixbuf.new_from_file_at_scale(file, CW, CH, false)) }
+  catch {}
+  im.set_size_request(CW, CH)
+  return im
 }
 
 function Card(path: string): Gtk.Widget {
   ensureBlur(path)
-  const id = sha(path)
 
-  const img = new Gtk.Box(); img.get_style_context().add_class("wp-img"); addBg(img, `i${id}`, thumbOf(path))
-  const blur = new Gtk.Box(); blur.get_style_context().add_class("wp-blur"); addBg(blur, `b${id}`, blurOf(path))
-  const scrim = new Gtk.Box(); scrim.get_style_context().add_class("wp-scrim")
+  const sharp = pic(thumbOf(path), "wp-img")
+  const blur  = pic(blurOf(path),  "wp-blur")
+  const scrim = new Gtk.Box();  scrim.get_style_context().add_class("wp-scrim")
 
   const heart = new Gtk.Button({ label: isFav(path) ? "♥" : "♡" })
   heart.get_style_context().add_class("pill"); heart.get_style_context().add_class("heart")
   if (isFav(path)) heart.get_style_context().add_class("on")
-
-  const cardBox = new Gtk.Box(); cardBox.get_style_context().add_class("wp-card")
-  if (isFav(path)) cardBox.get_style_context().add_class("fav")
-
-  heart.connect("clicked", () => {
-    toggleFav(path)
-    heart.label = isFav(path) ? "♥" : "♡"
-    const on = isFav(path)
-    on ? heart.get_style_context().add_class("on") : heart.get_style_context().remove_class("on")
-    on ? cardBox.get_style_context().add_class("fav") : cardBox.get_style_context().remove_class("fav")
-  })
 
   const setb = new Gtk.Button({ label: "Set" })
   setb.get_style_context().add_class("pill")
@@ -134,30 +121,60 @@ function Card(path: string): Gtk.Widget {
   pills.get_style_context().add_class("wp-pills")
   pills.add(heart); pills.add(setb)
 
-  const ov = new Gtk.EventBox({ visible_window: true })
-  ov.get_style_context().add_class("wp-ov")
   const overlay = new Gtk.Overlay()
-  overlay.add(img); overlay.add_overlay(blur); overlay.add_overlay(scrim); overlay.add_overlay(pills)
-  ov.add(overlay)
+  overlay.add(sharp)
+  overlay.add_overlay(blur)
+  overlay.add_overlay(scrim)
+  overlay.add_overlay(pills)
 
-  cardBox.add(ov); cardBox.show_all()
-  return cardBox
+  const card = new Gtk.EventBox({ visible_window: true })
+  card.get_style_context().add_class("wp-card")
+  if (isFav(path)) card.get_style_context().add_class("fav")
+  card.add(overlay)
+
+  heart.connect("clicked", () => {
+    toggleFav(path)
+    const on = isFav(path)
+    heart.label = on ? "♥" : "♡"
+    const c = card.get_style_context(), h = heart.get_style_context()
+    on ? h.add_class("on")  : h.remove_class("on")
+    on ? c.add_class("fav") : c.remove_class("fav")
+  })
+
+  const cx = card.get_style_context()
+  card.connect("enter-notify-event", () => { cx.add_class("hover"); return false })
+  card.connect("leave-notify-event", (_w: any, ev: any) => {
+    try { if (ev.detail === Gdk.NotifyType.INFERIOR) return false } catch {}
+    cx.remove_class("hover"); return false
+  })
+
+  card.show_all()
+  return card
 }
 
 function Grid(items: string[]): Gtk.Widget {
-  if (!items.length) {
-    const l = new Gtk.Label({ label: "no favourites yet — hover a wallpaper and tap ♡" })
-    l.get_style_context().add_class("wp-empty"); l.show_all()
-    return l
-  }
   const fb = new Gtk.FlowBox({
     selection_mode: Gtk.SelectionMode.NONE,
     max_children_per_line: 4, min_children_per_line: 2,
-    homogeneous: true, row_spacing: 8, column_spacing: 8, valign: Gtk.Align.START,
+    homogeneous: true, row_spacing: 6, column_spacing: 6, valign: Gtk.Align.START,
   })
   fb.get_style_context().add_class("wp-grid")
-  for (const p of items) fb.add(Card(p))
-  fb.show_all()
+  if (!items.length) {
+    const l = new Gtk.Label({ label: "no favourites yet — hover a wallpaper and tap ♡" })
+    l.get_style_context().add_class("wp-empty")
+    fb.add(l); fb.show_all()
+    return fb
+  }
+  let i = 0
+  const batch = () => {
+    const end = Math.min(i + 20, items.length)
+    for (; i < end; i++) fb.add(Card(items[i]))
+    fb.show_all()
+    if (i < items.length) return GLib.SOURCE_CONTINUE
+    return GLib.SOURCE_REMOVE
+  }
+  batch()
+  if (i < items.length) GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, batch)
   return fb
 }
 
@@ -166,12 +183,12 @@ function Main() {
   const scroller = () => {
     const s = new Gtk.ScrolledWindow({ hscrollbar_policy: Gtk.PolicyType.NEVER })
     s.get_style_context().add_class("wp-scroll")
-    s.set_min_content_width(1180); s.set_min_content_height(680)
+    s.set_min_content_width(1180); s.set_min_content_height(690)
     s.set_propagate_natural_width(true)
     return s
   }
   const stack = new Gtk.Stack({
-    transition_type: Gtk.StackTransitionType.CROSSFADE, transition_duration: 150,
+    transition_type: Gtk.StackTransitionType.CROSSFADE, transition_duration: 130,
   })
   const sAll = scroller(); sAll.add(Grid(all)); stack.add_named(sAll, "all")
   const sFav = scroller(); sFav.add(Grid(all.filter(isFav))); stack.add_named(sFav, "favs")
@@ -197,10 +214,7 @@ function Main() {
   tabs.get_style_context().add_class("wp-tabs")
   tabs.add(tabAll); tabs.add(tabFav)
 
-  const root = new Gtk.Box({
-    orientation: Gtk.Orientation.VERTICAL,
-    widthRequest: 1220, heightRequest: 740,
-  })
+  const root = new Gtk.Box({ orientation: Gtk.Orientation.VERTICAL })
   root.get_style_context().add_class("wp-root")
   root.add(tabs); root.add(stack)
   root.show_all()

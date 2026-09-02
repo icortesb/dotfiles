@@ -61,9 +61,13 @@ APPDIR="$HOME/.config/hyprpanel/wallpaper-picker"
 open_picker() {  # $1: optional "favs"
   if ags list 2>/dev/null | grep -qx wallpaper-picker; then
     ags quit -i wallpaper-picker
-  else
-    setsid ags run -d "$APPDIR" ${1:+-- "$1"} >/dev/null 2>&1 &
+    return
   fi
+  # rebuild the bundle only when the source changed (first run builds it)
+  if [ ! -f "$APPDIR/bundle.js" ] || [ "$APPDIR/app.tsx" -nt "$APPDIR/bundle.js" ]; then
+    ags bundle "$APPDIR/app.tsx" "$APPDIR/bundle.js" -g 3 -r "$APPDIR" >/dev/null 2>&1
+  fi
+  setsid "$APPDIR/bundle.js" ${1:+"$1"} >/dev/null 2>&1 &
 }
 
 command -v ags >/dev/null || { notify-send "Wallpaper" "ags (HyprPanel) not installed"; exit 1; }
