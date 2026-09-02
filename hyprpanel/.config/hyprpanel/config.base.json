@@ -417,6 +417,7 @@
         "workspaces"
       ],
       "right": [
+        "custom/claude",
         "updates",
         "network",
         "volume",
@@ -438,6 +439,7 @@
         "workspaces"
       ],
       "right": [
+        "custom/claude",
         "updates",
         "network",
         "volume",
@@ -459,6 +461,7 @@
         "workspaces"
       ],
       "right": [
+        "custom/claude",
         "updates",
         "network",
         "volume",
@@ -495,5 +498,6 @@
   "menus.dashboard.directories.right.directory3.command": "bash -c \"xdg-open $HOME/\"",
   "bar.customModules.updates.leftClick": "kitty -e yay -Syu",
   "wallpaper.enable": true,
-  "wallpaper.image": ""
+  "wallpaper.image": "",
+  "notifications.position": "top right"
 }

@@ -1,0 +1,14 @@
+{
+  "custom/claude": {
+    "icon": "󰚩",
+    "label": "{label}",
+    "tooltip": "{tooltip}",
+    "execute": "$HOME/.config/hyprpanel/scripts/claude-usage-label.sh",
+    "interval": 300000,
+    "hideOnEmpty": false,
+    "actions": {
+      "onLeftClick": "$HOME/.config/waybar/scripts/claude-usage-notify.sh",
+      "onRightClick": "kitty --hold -e $HOME/.config/waybar/scripts/claude-usage-show.sh"
+    }
+  }
+}
