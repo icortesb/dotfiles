@@ -93,8 +93,9 @@ grow-from-cursor transition. It manages **one** wallpaper — there is no galler
 UI. Change it with:
 
 ```sh
-hyprpanel setWallpaper /path/to/img.png     # single wallpaper, with transition
-~/.config/hyprpanel/scripts/wallpaper-cycle.sh   # random from ~/Pictures/wallpapers  (Super+Shift+W)
+hyprpanel setWallpaper /path/to/img.png            # single wallpaper, with transition
+~/.config/hyprpanel/scripts/wallpaper.sh menu      # picker: Random / Previous / every image
+~/.config/hyprpanel/scripts/wallpaper.sh next|prev # random / step back (history)
 ```
 
 Wallpaper pool: clone a curated repo outside the dotfiles tree, e.g.
