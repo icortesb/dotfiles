@@ -13,6 +13,8 @@
 set -o pipefail
 
 dir="${WALLPAPER_DIR:-$HOME/Pictures/wallpapers}"
+# many wallpaper repos keep the images in an images/ subdir
+[ -d "$dir/images" ] && dir="$dir/images"
 hist="$HOME/.cache/wallpaper-history"
 thumbs="$HOME/.cache/wallpaper-thumbs"
 favs="$HOME/.config/hyprpanel/wallpaper-favs"

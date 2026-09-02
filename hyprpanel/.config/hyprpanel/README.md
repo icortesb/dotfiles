@@ -102,9 +102,6 @@ hyprpanel setWallpaper /path/to/img.png            # single wallpaper, with tran
 Needs `rofi` (thumbnail grid) + `magick` (thumbnails, cached in `~/.cache/wallpaper-thumbs/`).
 Favourites live in `~/.config/hyprpanel/wallpaper-favs` (basenames, tracked → sync to the laptop).
 
-```sh
-```
-
 Wallpaper pool: clone a curated repo outside the dotfiles tree, e.g.
 `git clone --depth 1 https://github.com/D3Ext/aesthetic-wallpapers ~/Pictures/wallpapers`.
 The initial boot wallpaper is still set from `hyprland.lua` (`awww img …`).
