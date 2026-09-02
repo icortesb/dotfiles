@@ -261,7 +261,7 @@ ShellRoot {
                                 }
                                 // apply
                                 PillButton {
-                                    glyph: ""   // nf check
+                                    glyph: String.fromCodePoint(0xf012c)   // thin MD check, matches the outline heart
                                     activeColor: "#88c0d0"
                                     onActivated: root.apply(modelData)
                                 }
