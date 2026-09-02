@@ -18,7 +18,7 @@ and stowed like the rest (each top-level dir is `stow`-ed into `~`).
 
 ```sh
 # repo deps
-sudo pacman -S --needed jq nodejs awww rofi brightnessctl pacman-contrib wf-recorder \
+sudo pacman -S --needed jq nodejs awww imagemagick brightnessctl pacman-contrib wf-recorder \
                         wireplumber libgtop dart-sass gvfs gtksourceview3 \
                         ttf-jetbrains-mono-nerd
 
@@ -88,26 +88,34 @@ To apply an edit without relogin: `~/.config/hyprpanel/generate.sh && hyprpanel 
 
 ## Wallpaper
 
-`wallpaper.enable` is `true`; HyprPanel drives `awww` via the `swww` shim with a
-grow-from-cursor transition. It manages **one** wallpaper — there is no gallery
-UI. Change it with:
+`wallpaper.enable` is `true`; HyprPanel drives `awww` via the `swww` shim.
+Changing it:
 
 ```sh
-hyprpanel setWallpaper /path/to/img.png            # single wallpaper, with transition
-~/.config/hyprpanel/scripts/wallpaper.sh menu      # rofi thumbnail grid; Alt+f = ★ favourite
-~/.config/hyprpanel/scripts/wallpaper.sh favs      # grid of favourites only
+hyprpanel setWallpaper /path/to/img.png            # one image, with transition
+~/.config/hyprpanel/scripts/wallpaper.sh           # AGS picker (see below)
+~/.config/hyprpanel/scripts/wallpaper.sh favs      # picker, Favourites tab
 ~/.config/hyprpanel/scripts/wallpaper.sh next|prev # random / step back (history)
 ```
 
-Needs `rofi` (thumbnail grid) + `magick` (thumbnails, cached in `~/.cache/wallpaper-thumbs/`).
-Favourites live in `~/.config/hyprpanel/wallpaper-favs` (basenames, tracked → sync to the laptop).
+**The picker** is a small AGS/Astal GTK3 app in `wallpaper-picker/` (an `ags`
+project — `node_modules/` are symlinks into `/usr/share/ags/js`, tracked; only
+`@girs/` is git-ignored). Nord themed, thumbnail grid, **All / ★ Favourites**
+tabs. Hover a wallpaper → it blurs and two pills appear: **♥** (toggle
+favourite) and **Set** (apply + close). `Esc` closes. Favourites →
+`~/.config/hyprpanel/wallpaper-favs` (basenames, tracked → synced).
 
-Wallpaper pool: clone a curated repo outside the dotfiles tree, e.g.
+`wallpaper.sh` runs `ags run -d wallpaper-picker` (toggles the instance).
+Thumbnails + blurred variants (`<sha>.png` / `<sha>_b.png`) are built into
+`~/.cache/wallpaper-thumbs/` on first run. Needs `magick` (imagemagick) and
+`ags` (already a HyprPanel dep).
+
+Wallpaper pool: `~/Pictures/wallpapers` (or its `images/` subdir), e.g.
 `git clone --depth 1 https://github.com/D3Ext/aesthetic-wallpapers ~/Pictures/wallpapers`.
-The initial boot wallpaper is still set from `hyprland.lua` (`awww img …`).
 
-There is **no settings GUI** in this build (`ags-hyprpanel-git`) — configure via
-`config.base.json`, not in-app.
+There is **no HyprPanel settings GUI** in this build (`ags-hyprpanel-git`) —
+configure via `config.base.json`.
+
 
 ## Weather (disabled)
 
@@ -141,8 +149,8 @@ Degrades to `-` / cached data on any failure; 429s are normal and silent.
 | Super+N | `hyprpanel toggleWindow notificationsmenu` (was `swaync-client -t`) |
 | Super+R | restart HyprPanel (was reload waybar) |
 | Super+G | `scripts/dirjump.sh` — zoxide frecency → walker dmenu → open dir |
-| Super+Shift+W | `scripts/wallpaper.sh menu` — rofi thumbnail grid (Alt+f = ★ fav, Alt+r = random) |
-| Super+Alt+W | `scripts/wallpaper.sh favs` — grid of ★ favourites only |
+| Super+Shift+W | wallpaper picker (AGS thumbnail grid) |
+| Super+Alt+W | wallpaper picker, ★ Favourites tab |
 | Super+W | `scripts/wallpaper.sh next` — random wallpaper |
 | Super+Ctrl+W | `scripts/wallpaper.sh prev` — step back through history |
 
