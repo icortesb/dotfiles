@@ -327,6 +327,13 @@ hl.layer_rule({
     blur  = true,
 })
 
+hl.window_rule({
+    name  = "wallpaper-picker",
+    match = { namespace = "wallpaper-picker" },
+    float = true,
+    center = true,
+})
+
 hl.layer_rule({
     name  = "blur-hyprpanel",
     match = { namespace = "bar-.*" },
