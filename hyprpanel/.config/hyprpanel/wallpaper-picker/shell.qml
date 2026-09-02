@@ -261,7 +261,7 @@ ShellRoot {
                                 }
                                 // apply
                                 PillButton {
-                                    glyph: String.fromCodePoint(0xf012c)   // thin MD check, matches the outline heart
+                                    glyph: String.fromCodePoint(0xf0cfd)   // cursor-default-outline (matches the outline heart)
                                     activeColor: "#88c0d0"
                                     onActivated: root.apply(modelData)
                                 }
