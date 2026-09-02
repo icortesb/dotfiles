@@ -18,7 +18,7 @@ and stowed like the rest (each top-level dir is `stow`-ed into `~`).
 
 ```sh
 # repo deps
-sudo pacman -S --needed jq nodejs awww brightnessctl pacman-contrib wf-recorder \
+sudo pacman -S --needed jq nodejs awww rofi brightnessctl pacman-contrib wf-recorder \
                         wireplumber libgtop dart-sass gvfs gtksourceview3 \
                         ttf-jetbrains-mono-nerd
 
@@ -94,8 +94,15 @@ UI. Change it with:
 
 ```sh
 hyprpanel setWallpaper /path/to/img.png            # single wallpaper, with transition
-~/.config/hyprpanel/scripts/wallpaper.sh menu      # picker: Random / Previous / every image
+~/.config/hyprpanel/scripts/wallpaper.sh menu      # rofi thumbnail grid; Alt+f = ★ favourite
+~/.config/hyprpanel/scripts/wallpaper.sh favs      # grid of favourites only
 ~/.config/hyprpanel/scripts/wallpaper.sh next|prev # random / step back (history)
+```
+
+Needs `rofi` (thumbnail grid) + `magick` (thumbnails, cached in `~/.cache/wallpaper-thumbs/`).
+Favourites live in `~/.config/hyprpanel/wallpaper-favs` (basenames, tracked → sync to the laptop).
+
+```sh
 ```
 
 Wallpaper pool: clone a curated repo outside the dotfiles tree, e.g.
@@ -137,7 +144,8 @@ Degrades to `-` / cached data on any failure; 429s are normal and silent.
 | Super+N | `hyprpanel toggleWindow notificationsmenu` (was `swaync-client -t`) |
 | Super+R | restart HyprPanel (was reload waybar) |
 | Super+G | `scripts/dirjump.sh` — zoxide frecency → walker dmenu → open dir |
-| Super+Shift+W | `scripts/wallpaper.sh menu` — picker (Random / Previous / every image) |
+| Super+Shift+W | `scripts/wallpaper.sh menu` — rofi thumbnail grid (Alt+f = ★ fav, Alt+r = random) |
+| Super+Alt+W | `scripts/wallpaper.sh favs` — grid of ★ favourites only |
 | Super+W | `scripts/wallpaper.sh next` — random wallpaper |
 | Super+Ctrl+W | `scripts/wallpaper.sh prev` — step back through history |
 

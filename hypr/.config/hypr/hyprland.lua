@@ -248,6 +248,7 @@ local wallpaper = os.getenv("HOME") .. "/.config/hyprpanel/scripts/wallpaper.sh"
 hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd(wallpaper .. " menu"))
 hl.bind(mainMod .. " + W",         hl.dsp.exec_cmd(wallpaper .. " next"))
 hl.bind(mainMod .. " + CTRL + W",  hl.dsp.exec_cmd(wallpaper .. " prev"))
+hl.bind(mainMod .. " + ALT + W",   hl.dsp.exec_cmd(wallpaper .. " favs"))
 
 -- Move windows
 hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.window.move({ direction = "left" }))
