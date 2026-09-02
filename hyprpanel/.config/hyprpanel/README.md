@@ -105,10 +105,12 @@ Hover a wallpaper → it blurs (GPU) and two pills appear: **♥** (toggle
 favourite) and **Set** (apply + close). `Esc` or a backdrop click closes.
 Favourites → `~/.config/hyprpanel/wallpaper-favs` (basenames, tracked → synced).
 
-`wallpaper.sh menu|favs` runs `qs -p wallpaper-picker` and toggles the
-instance; `favs` opens the Favourites tab via `WP_TAB=favs`. Needs
-**`quickshell`** (`yay -S quickshell`). No thumbnail cache — Qt loads each
-image downscaled and only for visible cells.
+The picker runs as a **hidden resident Quickshell instance** (autostarted from
+`hyprland.lua`: `qs -p wallpaper-picker -d`). `wallpaper.sh menu|favs` just
+toggles its visibility over IPC (`qs ipc call picker toggle`) — ~30 ms, so it
+opens instantly. If the daemon isn't up yet it's started once, then shown.
+Thumbnails live in `~/.cache/wallpaper-thumbs/<md5>.png` and are (re)built in
+the background by `wallpaper.sh`. Needs **`quickshell`** + `imagemagick`.
 
 Wallpaper pool: `~/Pictures/wallpapers` (or its `images/` subdir), e.g.
 `git clone --depth 1 https://github.com/D3Ext/aesthetic-wallpapers ~/Pictures/wallpapers`.

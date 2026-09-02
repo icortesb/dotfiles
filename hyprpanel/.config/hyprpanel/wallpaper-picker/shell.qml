@@ -59,7 +59,7 @@ ShellRoot {
     function apply(p) {
         setter.command = ["hyprpanel", "setWallpaper", p]
         setter.running = true
-        Qt.quit()
+        win.visible = false
     }
 
     // ---------- wallpaper list ----------
@@ -89,20 +89,37 @@ ShellRoot {
 
     Component.onCompleted: { poolPick.running = true; favReader.running = true }
 
+    function refresh() { favReader.running = true; rebuild() }
+
+    // stays resident and hidden; wallpaper.sh toggles it over IPC -> instant open
+    IpcHandler {
+        target: "picker"
+        function show(t: string): void {
+            root.tab = (t === "favs") ? "favs" : "all"
+            root.refresh()
+            win.visible = true
+        }
+        function toggle(t: string): void {
+            if (win.visible) win.visible = false; else show(t)
+        }
+        function hide(): void { win.visible = false }
+    }
+
     // ---------- window ----------
     PanelWindow {
         id: win
+        visible: false
         color: "#00000000"
         anchors { top: true; bottom: true; left: true; right: true }
         exclusiveZone: 0
         WlrLayershell.layer: WlrLayer.Overlay
-        WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+        WlrLayershell.keyboardFocus: win.visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
         WlrLayershell.namespace: "wallpaper-picker"
 
         Rectangle {
             anchors.fill: parent
             color: "#00000073"
-            MouseArea { anchors.fill: parent; onClicked: Qt.quit() }
+            MouseArea { anchors.fill: parent; onClicked: win.visible = false }
         }
 
         Rectangle {
@@ -283,7 +300,7 @@ ShellRoot {
                 }
             }
 
-            Shortcut { sequences: ["Escape"]; onActivated: Qt.quit() }
+            Shortcut { sequences: ["Escape"]; onActivated: win.visible = false }
         }
     }
 }
