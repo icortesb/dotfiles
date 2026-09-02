@@ -2,7 +2,8 @@
 # Renders the machine-specific HyprPanel config from the tracked templates.
 # Runs from hyprland.lua autostart, before `hyprpanel` starts.
 #
-#   config.base.json   -> config.json   (+ wallpaper path, + battery module if a laptop)
+#   config.base.json   -> config.json   (+ wallpaper path; + battery if a laptop;
+#                                        + custom/mobidb if ~/MDG/mdg-infra exists)
 #   modules.base.json  -> modules.json  ($HOME expanded to an absolute path)
 #
 # config.json / modules.json are git-ignored: edit the *.base.json files, not these.
@@ -19,6 +20,13 @@ if ls /sys/class/power_supply/BAT* >/dev/null 2>&1; then
   filter="$filter"' | (.["bar.layouts"][].right) |= (
       if index("battery") then .
       else ( .[:(index("clock") // length)] + ["battery"] + .[(index("clock") // length):] )
+      end)'
+fi
+if [ -d "$HOME/MDG/mdg-infra" ]; then
+  # work machine -> insert the mobidb DB-tunnel module just before "clock"
+  filter="$filter"' | (.["bar.layouts"][].right) |= (
+      if index("custom/mobidb") then .
+      else ( .[:(index("clock") // length)] + ["custom/mobidb"] + .[(index("clock") // length):] )
       end)'
 fi
 jq --arg img "$img" "$filter" "$d/config.base.json" > "$d/config.json.tmp"

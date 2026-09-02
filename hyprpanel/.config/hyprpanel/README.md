@@ -78,7 +78,10 @@ Log out / back in (or just `hyprpanel` from a terminal to test first).
    system battery exists** (`/sys/class/power_supply/BAT*`). Desktop → hidden;
    laptop → shows the percentage. The Logitech mouse's `hidpp_battery_0` does
    not count.
-3. Seeds `~/.config/background` (HyprPanel's "current wallpaper" copy) so its
+3. **mobidb module**: adds `custom/mobidb` (the DB SSH-tunnel status/toggle,
+   `waybar/.config/waybar/scripts/mobidb-tunnel`) to the bar **only if
+   `~/MDG/mdg-infra` exists** — i.e. the work machine. Same idea as battery.
+4. Seeds `~/.config/background` (HyprPanel's "current wallpaper" copy) so its
    first `swww img` call succeeds.
 
 To apply an edit without relogin: `~/.config/hyprpanel/generate.sh && hyprpanel -q; hyprpanel`

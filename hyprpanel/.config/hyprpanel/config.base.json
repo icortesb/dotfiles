@@ -507,5 +507,10 @@
   "theme.bar.buttons.modules.claude.border": "#81a1c1",
   "menus.clock.weather.unit": "metric",
   "menus.clock.weather.location": "Buenos Aires",
-  "menus.clock.weather.enabled": false
+  "menus.clock.weather.enabled": false,
+  "theme.bar.buttons.modules.mobidb.background": "#3b4252",
+  "theme.bar.buttons.modules.mobidb.icon_background": "#8fbcbb",
+  "theme.bar.buttons.modules.mobidb.text": "#8fbcbb",
+  "theme.bar.buttons.modules.mobidb.icon": "#8fbcbb",
+  "theme.bar.buttons.modules.mobidb.border": "#8fbcbb"
 }
