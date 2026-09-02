@@ -47,7 +47,20 @@ cd ~/.dotfiles && stow hyprpanel        # symlinks ~/.config/hyprpanel
 ~/.config/hyprpanel/generate.sh         # writes config.json + modules.json
 ```
 
-### 4. Relogin
+### 4. Wallpapers
+
+The picker reads `~/Pictures/wallpapers` (its `images/` subdir if one exists).
+Clone the curated set this config was built against — **[D3Ext/aesthetic-wallpapers](https://github.com/D3Ext/aesthetic-wallpapers)**
+(~800 images, ~630 MB, MIT, sourced from Wallhaven + r/unixporn):
+
+```sh
+git clone --depth 1 https://github.com/D3Ext/aesthetic-wallpapers ~/Pictures/wallpapers
+```
+
+Any folder of jpg/png/webp works; set `$WALLPAPER_DIR` to point elsewhere.
+`~/walls/wall1.png` is the fallback boot wallpaper (set from `hyprland.lua`).
+
+### 5. Relogin
 
 `hypr/.config/hypr/hyprland.lua` already autostarts it:
 
@@ -115,8 +128,9 @@ opens instantly. If the daemon isn't up yet it's started once, then shown.
 Thumbnails live in `~/.cache/wallpaper-thumbs/<md5>.png` and are (re)built in
 the background by `wallpaper.sh`. Needs **`quickshell`** + `imagemagick`.
 
-Wallpaper pool: `~/Pictures/wallpapers` (or its `images/` subdir), e.g.
-`git clone --depth 1 https://github.com/D3Ext/aesthetic-wallpapers ~/Pictures/wallpapers`.
+Wallpaper pool: `~/Pictures/wallpapers` (or its `images/` subdir) — populated
+from **[D3Ext/aesthetic-wallpapers](https://github.com/D3Ext/aesthetic-wallpapers)**
+(see import step 4). Override with `$WALLPAPER_DIR`.
 
 There is **no HyprPanel settings GUI** in this build (`ags-hyprpanel-git`) —
 configure via `config.base.json`.
