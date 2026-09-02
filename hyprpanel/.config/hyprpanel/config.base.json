@@ -512,5 +512,10 @@
   "theme.bar.buttons.modules.mobidb.icon_background": "#8fbcbb",
   "theme.bar.buttons.modules.mobidb.text": "#8fbcbb",
   "theme.bar.buttons.modules.mobidb.icon": "#8fbcbb",
-  "theme.bar.buttons.modules.mobidb.border": "#8fbcbb"
+  "theme.bar.buttons.modules.mobidb.border": "#8fbcbb",
+  "theme.bar.buttons.modules.iwd.background": "#3b4252",
+  "theme.bar.buttons.modules.iwd.icon_background": "#caa6f7",
+  "theme.bar.buttons.modules.iwd.text": "#88c0d0",
+  "theme.bar.buttons.modules.iwd.icon": "#88c0d0",
+  "theme.bar.buttons.modules.iwd.border": "#88c0d0"
 }

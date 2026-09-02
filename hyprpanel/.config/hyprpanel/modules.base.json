@@ -21,5 +21,16 @@
       "onLeftClick": "$HOME/.config/waybar/scripts/mobidb-tunnel connect",
       "onRightClick": "$HOME/.config/waybar/scripts/mobidb-tunnel disconnect"
     }
+  },
+  "custom/iwd": {
+    "label": "{text}",
+    "tooltip": "{tooltip}",
+    "execute": "$HOME/.config/hyprpanel/scripts/iwd-status.sh",
+    "interval": 5000,
+    "hideOnEmpty": false,
+    "actions": {
+      "onLeftClick": "$HOME/.config/hyprpanel/scripts/iwd-menu.sh",
+      "onRightClick": "sh -c 'for x in /sys/class/net/*/wireless; do [ -e \"$x\" ] && iwctl station \"$(basename $(dirname $x))\" disconnect && exit; done'"
+    }
   }
 }

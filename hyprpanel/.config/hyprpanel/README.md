@@ -94,7 +94,13 @@ Log out / back in (or just `hyprpanel` from a terminal to test first).
 3. **mobidb module**: adds `custom/mobidb` (the DB SSH-tunnel status/toggle,
    `waybar/.config/waybar/scripts/mobidb-tunnel`) to the bar **only if
    `~/MDG/mdg-infra` exists** — i.e. the work machine. Same idea as battery.
-4. Seeds `~/.config/background` (HyprPanel's "current wallpaper" copy) so its
+4. **Wi-Fi module**: on a machine with **no NetworkManager** (`nmcli` absent),
+   HyprPanel's `network` module can't see the adapter, so it's swapped for
+   `custom/iwd` — `scripts/iwd-status.sh` (state via `iwctl station show`) with
+   a left-click `scripts/iwd-menu.sh` (scan → walker dmenu → connect, prompts
+   the passphrase). If the `get-networks` parsing is flaky on some hardware,
+   `iwmenu` (AUR) is a drop-in: point `onLeftClick` at `iwmenu -m dmenu -d walker`.
+5. Seeds `~/.config/background` (HyprPanel's "current wallpaper" copy) so its
    first `swww img` call succeeds.
 
 To apply an edit without relogin: `~/.config/hyprpanel/generate.sh && hyprpanel -q; hyprpanel`

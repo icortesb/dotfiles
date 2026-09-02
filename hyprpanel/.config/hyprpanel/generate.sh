@@ -3,7 +3,8 @@
 # Runs from hyprland.lua autostart, before `hyprpanel` starts.
 #
 #   config.base.json   -> config.json   (+ wallpaper path; + battery if a laptop;
-#                                        + custom/mobidb if ~/MDG/mdg-infra exists)
+#                                        + custom/mobidb if ~/MDG/mdg-infra exists;
+#                                        network -> custom/iwd if no NetworkManager)
 #   modules.base.json  -> modules.json  ($HOME expanded to an absolute path)
 #
 # config.json / modules.json are git-ignored: edit the *.base.json files, not these.
@@ -28,6 +29,11 @@ if [ -d "$HOME/MDG/mdg-infra" ]; then
       if index("custom/mobidb") then .
       else ( .[:(index("clock") // length)] + ["custom/mobidb"] + .[(index("clock") // length):] )
       end)'
+fi
+if ! command -v nmcli >/dev/null 2>&1; then
+  # no NetworkManager (iwd-only machine) -> HyprPanel's "network" module can't
+  # see the adapter; swap it for custom/iwd (iwctl-based status + connect menu)
+  filter="$filter"' | (.["bar.layouts"][].right) |= map(if . == "network" then "custom/iwd" else . end)'
 fi
 jq --arg img "$img" "$filter" "$d/config.base.json" > "$d/config.json.tmp"
 mv "$d/config.json.tmp" "$d/config.json"
