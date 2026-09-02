@@ -104,6 +104,14 @@ The initial boot wallpaper is still set from `hyprland.lua` (`awww img …`).
 There is **no settings GUI** in this build (`ags-hyprpanel-git`) — configure via
 `config.base.json`, not in-app.
 
+## Weather (disabled)
+
+`menus.clock.weather.enabled` is **false**. HyprPanel's weather uses
+weatherapi.com and needs a free API key in `menus.clock.weather.key` — it is
+**not set**. To enable: register at weatherapi.com, put the key in
+`config.base.json`, set `menus.clock.weather.location` (`Buenos Aires`) and
+`.enabled` true.
+
 ---
 
 ## Claude Code usage module (`custom/claude`)
@@ -128,7 +136,9 @@ Degrades to `-` / cached data on any failure; 429s are normal and silent.
 | Super+N | `hyprpanel toggleWindow notificationsmenu` (was `swaync-client -t`) |
 | Super+R | restart HyprPanel (was reload waybar) |
 | Super+G | `scripts/dirjump.sh` — zoxide frecency → walker dmenu → open dir |
-| Super+Shift+W | `scripts/wallpaper-cycle.sh` — random wallpaper from `~/Pictures/wallpapers` |
+| Super+Shift+W | `scripts/wallpaper.sh menu` — picker (Random / Previous / every image) |
+| Super+W | `scripts/wallpaper.sh next` — random wallpaper |
+| Super+Ctrl+W | `scripts/wallpaper.sh prev` — step back through history |
 
 Blur: `hl.layer_rule` for namespace `bar-.*`.
 

@@ -244,7 +244,10 @@ hl.bind(mainMod .. " + period", hl.dsp.focus({ workspace = "e+1" }))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("brave"))
 hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("kitty -e nvim ."))
 hl.bind(mainMod .. " + G", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/hyprpanel/scripts/dirjump.sh"))
-hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/hyprpanel/scripts/wallpaper-cycle.sh"))
+local wallpaper = os.getenv("HOME") .. "/.config/hyprpanel/scripts/wallpaper.sh"
+hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd(wallpaper .. " menu"))
+hl.bind(mainMod .. " + W",         hl.dsp.exec_cmd(wallpaper .. " next"))
+hl.bind(mainMod .. " + CTRL + W",  hl.dsp.exec_cmd(wallpaper .. " prev"))
 
 -- Move windows
 hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.window.move({ direction = "left" }))
