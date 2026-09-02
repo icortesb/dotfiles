@@ -71,7 +71,7 @@ rofi_grid() { # $1 = newline list of abs paths; echoes: <exitcode>\n<selected ba
   done)"
   local sel rc
   sel="$(printf '%s' "$feed" | rofi -dmenu -i -p wallpaper \
-      -kb-custom-1 'Alt+f' -kb-custom-2 'Alt+r' \
+      -kb-mode-complete '' -kb-custom-1 'Alt+f' -kb-custom-2 'Alt+r' \
       -theme-str '
         configuration { show-icons: true; }
         window   { width: 70%; }
