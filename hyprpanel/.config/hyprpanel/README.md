@@ -88,10 +88,21 @@ To apply an edit without relogin: `~/.config/hyprpanel/generate.sh && hyprpanel 
 
 ## Wallpaper
 
-`wallpaper.enable` is `true`. HyprPanel drives `awww` (via the `swww` shim) —
-the dashboard has a wallpaper picker with transitions. The initial wallpaper is
-also set directly from `hyprland.lua` (`awww img …`) so it shows even before
-HyprPanel is up.
+`wallpaper.enable` is `true`; HyprPanel drives `awww` via the `swww` shim with a
+grow-from-cursor transition. It manages **one** wallpaper — there is no gallery
+UI. Change it with:
+
+```sh
+hyprpanel setWallpaper /path/to/img.png     # single wallpaper, with transition
+~/.config/hyprpanel/scripts/wallpaper-cycle.sh   # random from ~/Pictures/wallpapers  (Super+Shift+W)
+```
+
+Wallpaper pool: clone a curated repo outside the dotfiles tree, e.g.
+`git clone --depth 1 https://github.com/D3Ext/aesthetic-wallpapers ~/Pictures/wallpapers`.
+The initial boot wallpaper is still set from `hyprland.lua` (`awww img …`).
+
+There is **no settings GUI** in this build (`ags-hyprpanel-git`) — configure via
+`config.base.json`, not in-app.
 
 ---
 
