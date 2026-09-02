@@ -402,6 +402,7 @@
   "bar.customModules.ram.labelType": "percentage",
   "bar.customModules.cpu.pollingInterval": 2000,
   "bar.customModules.updates.pollingInterval": 1440000,
+  "bar.customModules.updates.autoHide": true,
   "bar.notifications.show_total": true,
   "menus.dashboard.powermenu.avatar.name": "icortes",
   "bar.layouts": {
