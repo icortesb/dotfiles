@@ -1,38 +1,74 @@
 /* Nord thumbnail grid for wallpaper.sh */
+configuration { show-icons: true; }
+
 * {
-    bg:      #2e3440;
-    bg-alt:  #3b4252;
-    fg:      #d8dee9;
-    fg-dim:  #7b88a1;
-    accent:  #88c0d0;
+    bg:     #2e3440;
+    bg-alt: #3b4252;
+    bg-sel: #88c0d0;
+    fg:     #d8dee9;
+    fg-dim: #7b88a1;
+    fg-sel: #2e3440;
 }
+
 window {
     background-color: @bg;
-    border:          2px solid;
-    border-color:    @bg-alt;
-    border-radius:   14px;
-    width:           74%;
-    padding:         16px;
+    border:           2px;
+    border-color:     @bg-alt;
+    border-radius:    14px;
+    width:            74%;
+    padding:          16px;
+    location:         center;
 }
-mainbox { spacing: 12px; children: [ inputbar, message, listview ]; }
+mainbox {
+    background-color: transparent;
+    spacing:          12px;
+    children:         [ inputbar, message, listview ];
+}
 inputbar {
     background-color: @bg-alt;
+    text-color:       @fg;
     border-radius:    10px;
     padding:          10px 14px;
     spacing:          8px;
     children:         [ prompt, entry ];
 }
-prompt  { text-color: @accent; }
-entry   { text-color: @fg; placeholder: "Type to filter"; placeholder-color: @fg-dim; }
-message { padding: 0px; }
-textbox { text-color: @fg-dim; background-color: transparent; }
-listview { columns: 4; lines: 3; spacing: 14px; scrollbar: false; }
+prompt  { background-color: transparent; text-color: @bg-sel; }
+entry   { background-color: transparent; text-color: @fg;
+          placeholder: "Type to filter"; placeholder-color: @fg-dim; }
+message { background-color: transparent; text-color: @fg-dim; padding: 2px 4px; }
+textbox { background-color: transparent; text-color: @fg-dim; }
+listview {
+    background-color: transparent;
+    columns:          4;
+    lines:            3;
+    spacing:          14px;
+    scrollbar:        false;
+    fixed-height:     false;
+}
 element {
+    background-color: @bg-alt;
+    text-color:       @fg;
     orientation:      vertical;
     padding:          8px;
+    border:           2px;
+    border-color:     @bg-alt;
     border-radius:    12px;
-    background-color: @bg-alt;
 }
-element selected { background-color: @accent; text-color: @bg; }
-element-icon { size: 13em; border-radius: 8px; horizontal-align: 0.5; }
-element-text { text-color: inherit; horizontal-align: 0.5; padding: 8px 0px 2px 0px; }
+element selected {
+    background-color: @bg-alt;
+    text-color:       @bg-sel;
+    border-color:     @bg-sel;
+}
+element-icon {
+    background-color: transparent;
+    size:             13em;
+    border-radius:    8px;
+    horizontal-align: 0.5;
+}
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    horizontal-align: 0.5;
+    vertical-align:   0.5;
+    padding:          8px 2px 2px 2px;
+}

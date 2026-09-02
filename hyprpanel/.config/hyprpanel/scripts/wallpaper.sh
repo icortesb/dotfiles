@@ -76,7 +76,7 @@ grid() {
       [ -n "$f" ] || continue
       n="$(basename "$f")"; is_fav "$f" && n="★ $n"
       printf '%s\0icon\x1f%s\n' "$n" "$(thumb "$f")"
-    done | rofi -dmenu -i -p wallpaper -theme "$theme" \
+    done | rofi -dmenu -i -p wallpaper -show-icons -theme "$theme" \
         -mesg "Enter set   ·   Alt+1 toggle ★   ·   Alt+2 $m2"
   )"
   rc=$?
