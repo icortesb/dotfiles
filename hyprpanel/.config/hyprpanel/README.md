@@ -149,7 +149,7 @@ Degrades to `-` / cached data on any failure; 429s are normal and silent.
 | Super+N | `hyprpanel toggleWindow notificationsmenu` (was `swaync-client -t`) |
 | Super+R | restart HyprPanel (was reload waybar) |
 | Super+G | `scripts/dirjump.sh` — zoxide frecency → walker dmenu → open dir |
-| Super+Shift+W | wallpaper picker (AGS thumbnail grid) |
+| Super+Shift+W | `scripts/wallpaper.sh` — Quickshell picker (thumbnail grid, tabs, hover ♥/Set) |
 | Super+Alt+W | wallpaper picker, ★ Favourites tab |
 | Super+W | `scripts/wallpaper.sh next` — random wallpaper |
 | Super+Ctrl+W | `scripts/wallpaper.sh prev` — step back through history |
