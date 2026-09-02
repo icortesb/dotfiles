@@ -261,7 +261,7 @@ ShellRoot {
                                 }
                                 // apply
                                 PillButton {
-                                    glyph: String.fromCodePoint(0xf0cfd)   // cursor-default-outline (matches the outline heart)
+                                    glyph: String.fromCodePoint(0xf25a)   // nf-fa-hand-pointer-o: outline pointer hand
                                     activeColor: "#88c0d0"
                                     onActivated: root.apply(modelData)
                                 }
