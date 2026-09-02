@@ -1,0 +1,38 @@
+/* Nord thumbnail grid for wallpaper.sh */
+* {
+    bg:      #2e3440;
+    bg-alt:  #3b4252;
+    fg:      #d8dee9;
+    fg-dim:  #7b88a1;
+    accent:  #88c0d0;
+}
+window {
+    background-color: @bg;
+    border:          2px solid;
+    border-color:    @bg-alt;
+    border-radius:   14px;
+    width:           74%;
+    padding:         16px;
+}
+mainbox { spacing: 12px; children: [ inputbar, message, listview ]; }
+inputbar {
+    background-color: @bg-alt;
+    border-radius:    10px;
+    padding:          10px 14px;
+    spacing:          8px;
+    children:         [ prompt, entry ];
+}
+prompt  { text-color: @accent; }
+entry   { text-color: @fg; placeholder: "Type to filter"; placeholder-color: @fg-dim; }
+message { padding: 0px; }
+textbox { text-color: @fg-dim; background-color: transparent; }
+listview { columns: 4; lines: 3; spacing: 14px; scrollbar: false; }
+element {
+    orientation:      vertical;
+    padding:          8px;
+    border-radius:    12px;
+    background-color: @bg-alt;
+}
+element selected { background-color: @accent; text-color: @bg; }
+element-icon { size: 13em; border-radius: 8px; horizontal-align: 0.5; }
+element-text { text-color: inherit; horizontal-align: 0.5; padding: 8px 0px 2px 0px; }
