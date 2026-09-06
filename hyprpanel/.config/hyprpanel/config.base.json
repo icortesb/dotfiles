@@ -500,6 +500,7 @@
   "bar.customModules.updates.leftClick": "kitty -e yay -Syu",
   "wallpaper.enable": true,
   "wallpaper.image": "",
+  "notifications.grouped": true,
   "notifications.position": "top right",
   "theme.bar.buttons.modules.claude.background": "#3b4252",
   "theme.bar.buttons.modules.claude.icon_background": "#81a1c1",

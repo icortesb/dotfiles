@@ -1,0 +1,82 @@
+# Basado en el PKGBUILD de ags-hyprpanel-git (cat_nm, jaskir).
+# Construye desde el clon local con el parche de agrupacion de notificaciones.
+pkgname=ags-hyprpanel-grouped
+pkgver=r632.bc41b9e
+pkgrel=1
+pkgdesc="HyprPanel con agrupacion de notificaciones por aplicacion"
+provides=('ags-hyprpanel-git')
+conflicts=('ags-hyprpanel-git')
+arch=('x86_64')
+url="https://hyprpanel.com/"
+license=('MIT')
+depends=(
+    # official repository:
+    'wireplumber'
+    'libgtop'
+    'bluez'
+    'bluez-utils'
+    'networkmanager'
+    'dart-sass'
+    'wl-clipboard'
+    'upower'
+    'gvfs'
+    'ttf-jetbrains-mono-nerd'
+    'gtksourceview3'
+    'libsoup3'
+    # aur:
+    'aylurs-gtk-shell-git'
+    'libastal-gjs-git'
+    'libastal-meta'
+)
+makedepends=(
+    'meson'
+    'unzip'
+    'git'
+    'npm'
+)
+optdepends=(
+    'python: GPU usage tracking (NVidia only)'
+    'python-gpustat: GPU usage tracking (NVidia only)'
+    'python-pywal: Pywal hook for wallpapers'
+    'pacman-contrib: Checking for pacman updates'
+    'power-profiles-daemon: Switch power profiles'
+    'swww: Setting wallpapers'
+    'grimblast-git: For the snapshot shortcut'
+    'brightnessctl: To control keyboard and screen brightness'
+    'btop: To view system resource usage'
+    'wf-recorder: To use the built in screen recorder'
+    'hyprpicker: To use the preset color picker shortcut'
+    'hypridle: To use hyprlands idle inhibitor'
+    'hyprsunset: To enable the hyprland blue light filter'
+    'matugen-bin: To use wallpaper based color schemes'
+)
+# Para iterar sobre el clon local sin pushear:
+#   source=("git+file://$HOME/Dev/HyprPanel#branch=feat/group-notifications-by-app")
+source=("git+https://github.com/icortesb/HyprPanel.git#branch=feat/group-notifications-by-app")
+sha256sums=('SKIP')
+
+pkgver() {
+    cd "$srcdir/HyprPanel"
+    printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short=7 HEAD)"
+}
+
+prepare() {
+    cd "$srcdir/HyprPanel"
+
+    npm install
+}
+
+build() {
+    cd "$srcdir/HyprPanel"
+    arch-meson build
+    meson compile -C build
+}
+
+package() {
+    cd "$srcdir/HyprPanel"
+
+    meson install -C build --destdir "$pkgdir"
+
+    # License
+    install -Dm644 "LICENSE" "$pkgdir/usr/share/licenses/${pkgname}/LICENSE"
+}
