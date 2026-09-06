@@ -103,7 +103,7 @@ Log out / back in (or just `hyprpanel` from a terminal to test first).
    laptop → shows the percentage. The Logitech mouse's `hidpp_battery_0` does
    not count.
 3. **mobidb module**: adds `custom/mobidb` (the DB SSH-tunnel status/toggle,
-   `waybar/.config/waybar/scripts/mobidb-tunnel`) to the bar **only if
+   `bin/.local/bin/mobidb-tunnel`) to the bar **only if
    `~/MDG/mdg-infra` exists** — i.e. the work machine. Same idea as battery.
 4. **Wi-Fi module**: on a machine with **no NetworkManager** (`nmcli` absent),
    HyprPanel's `network` module can't see the adapter, so it's swapped for
@@ -170,7 +170,7 @@ weatherapi.com and needs a free API key in `menus.clock.weather.key` — it is
 
 Shows session (5h) and weekly usage, pulled from the same endpoint as Claude
 Code's `/usage`. Defined in `modules.base.json`; `scripts/claude-usage-label.sh`
-adapts the waybar script `waybar/.config/waybar/scripts/claude-usage.sh` into the
+adapts `hyprpanel/.config/hyprpanel/scripts/claude-usage.sh` into the
 module's `{label}` / `{tooltip}` templates.
 
 - **left-click** → notification popup (`claude-usage-notify.sh`)

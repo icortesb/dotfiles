@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Feeds the HyprPanel `custom/claude` module.
-# Reuses waybar/.config/waybar/scripts/claude-usage.sh (JSON + Pango output) and
+# Reuses hyprpanel/.config/hyprpanel/scripts/claude-usage.sh (JSON + Pango output) and
 # re-emits { "label": <short>, "tooltip": <multiline> } as plain text, which the
 # module's "{label}" / "{tooltip}" templates then render.
 set -o pipefail
 
-raw="$("$HOME/.config/waybar/scripts/claude-usage.sh" 2>/dev/null)"
+raw="$("$HOME/.config/hyprpanel/scripts/claude-usage.sh" 2>/dev/null)"
 [ -n "$raw" ] || { printf '{"label":"-","tooltip":"No Claude usage data yet"}'; exit 0; }
 
 printf '%s' "$raw" | node -e '

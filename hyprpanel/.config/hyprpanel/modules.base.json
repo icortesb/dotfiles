@@ -7,19 +7,19 @@
     "interval": 300000,
     "hideOnEmpty": false,
     "actions": {
-      "onLeftClick": "$HOME/.config/waybar/scripts/claude-usage-notify.sh",
-      "onRightClick": "kitty --hold -e $HOME/.config/waybar/scripts/claude-usage-show.sh"
+      "onLeftClick": "$HOME/.config/hyprpanel/scripts/claude-usage-notify.sh",
+      "onRightClick": "kitty --hold -e $HOME/.config/hyprpanel/scripts/claude-usage-show.sh"
     }
   },
   "custom/mobidb": {
     "label": "{text}",
     "tooltip": "{tooltip}",
-    "execute": "$HOME/.config/waybar/scripts/mobidb-tunnel status",
+    "execute": "mobidb-tunnel status",
     "interval": 5000,
     "hideOnEmpty": true,
     "actions": {
-      "onLeftClick": "$HOME/.config/waybar/scripts/mobidb-tunnel connect",
-      "onRightClick": "$HOME/.config/waybar/scripts/mobidb-tunnel disconnect"
+      "onLeftClick": "mobidb-tunnel connect",
+      "onRightClick": "mobidb-tunnel disconnect"
     }
   },
   "custom/iwd": {
