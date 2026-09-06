@@ -51,7 +51,7 @@ cd ~/.dotfiles && stow hyprpanel        # symlinks ~/.config/hyprpanel
 ### 4. HyprPanel itself
 
 ```sh
-cd ~/.config/hyprpanel/pkg && makepkg -f              # builds from the GitHub fork
+cd ~/.dotfiles/pkgbuilds/ags-hyprpanel-grouped && makepkg -Ccf            # builds from the GitHub fork
 sudo pacman -U ags-hyprpanel-grouped-*.pkg.tar.zst
 ```
 
@@ -260,9 +260,10 @@ Rebuilding after editing the fork:
 
 ```sh
 cd ~/Dev/HyprPanel && git commit -am '...' && git push fork   # the PKGBUILD builds from the fork
-cd ~/.config/hyprpanel/pkg
-rm -rf src pkg HyprPanel                              # or pkgver sticks at the old commit
-makepkg -f && sudo pacman -U ags-hyprpanel-grouped-*.pkg.tar.zst
+cd ~/.dotfiles/pkgbuilds/ags-hyprpanel-grouped
+makepkg -Ccf && sudo pacman -U ags-hyprpanel-grouped-*.pkg.tar.zst
+#      ^^ -C limpia src/ antes (si no, pkgver se queda en el commit viejo)
+#         -c borra src/ y pkg/ despues (si no, quedan ~160 MB tirados)
 hyprpanel -q; hyprpanel
 ```
 

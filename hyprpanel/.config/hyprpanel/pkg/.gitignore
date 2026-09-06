@@ -1,6 +1,0 @@
-# artefactos de makepkg
-src/
-pkg/
-HyprPanel/
-*.pkg.tar.zst
-*.log
