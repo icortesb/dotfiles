@@ -54,13 +54,13 @@ hl.env("WAYLAND_DISPLAY", "wayland-0")
 hl.config({
     general = {
         gaps_in  = 2,
-        gaps_out = 2,
+        gaps_out = 8,
 
         border_size = 1,
 
         col = {
-            active_border   = "rgba(ffffffee)",
-            inactive_border = "rgba(404040dd)",
+            active_border   = "rgba(88c0d0ee)",
+            inactive_border = "rgba(3b4252dd)",
         },
 
         resize_on_border = false,

@@ -7,7 +7,7 @@
 # es la unica forma de reproducir dentro de kitty el efecto de Hyprland.
 #
 # El color sale de decoration.inactive_opacity = 0.85 (~/.config/hypr/hyprland.lua):
-#   #1a1b26 * 0.85 = #161720 ~= #16161e (bg_dark de Tokyo Night).
+#   #2e3440 * 0.85 = #272c36 (nord0 atenuado).
 #
 # Al ganar foco se repintan TODAS las ventanas del tab, no solo la que cambio:
 # kitty no emite el evento focused=False de la ventana anterior cuando se crea
@@ -19,8 +19,8 @@ from kitty.boss import Boss
 from kitty.fast_data_types import patch_color_profiles
 from kitty.window import Window
 
-ACTIVE_BG = 0x1a1b26
-INACTIVE_BG = 0x16161e
+ACTIVE_BG = 0x2e3440
+INACTIVE_BG = 0x272c36
 
 
 def _set_bg(window: Window, color: int) -> None:
