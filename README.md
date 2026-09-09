@@ -19,7 +19,7 @@ Configs de Arch Linux + Hyprland, gestionadas con GNU Stow.
 | Lock / idle | hyprlock + hypridle |
 | Shell | zsh |
 
-Paquetes stow: `bin hypr hyprpanel kitty nvim systemd walker walls zsh`
+Paquetes stow: `bin hypr hyprpanel kitty nvim walker walls zsh`
 
 **Ya no se usan** waybar, swaync, wofi ni hyprpaper. Si un historial viejo
 o una guía te dice que los instales, está desactualizado.
@@ -58,6 +58,74 @@ editar siempre los `*.base.json`.
 Para regenerar a mano: `bash ~/.config/hyprpanel/generate.sh && hyprpanel -q; hyprpanel`
 
 Monitores: `bash ~/.config/hypr/scripts/detect-monitors.sh`
+
+--------------------------------------------------
+
+## Al traer cambios (`git pull`)
+
+`git pull` actualiza el repo pero **no deshace nada en el sistema**. Cuando
+un commit *elimina* algo, quedan dos cosas colgadas:
+
+- **Symlinks de stow rotos.** Stow no los limpia solo cuando desaparece el
+  archivo original. `stow -R <paquete>` (restow) reordena el paquete;
+  `stow -D <paquete>` lo desmonta entero.
+- **Units de systemd que siguen enabled.** Borrar el `.service` del repo no
+  lo para ni lo deshabilita. Peor: una vez que el archivo no existe,
+  `systemctl --user disable` ya no lo encuentra y hay que sacar los symlinks
+  a mano.
+
+Por eso el orden correcto es **deshabilitar servicios antes de pullear**, no
+después.
+
+Chequeo rápido post-pull:
+
+```bash
+find ~/.config -xtype l                          # symlinks rotos
+systemctl --user list-units --state=not-found    # units fantasma
+systemctl --user --failed
+```
+
+### Migraciones pendientes
+
+Cada commit que elimine algo deja acá su procedimiento, con fecha. Aplicá
+las entradas posteriores al último pull de *esta* máquina; son idempotentes,
+repetirlas no rompe nada. **No las borres**: otra máquina puede no haberlas
+corrido todavía.
+
+#### 2026-09-09 — se eliminó `battery-notify` (commit `9351ae4`)
+
+HyprPanel ya trae su propio aviso de batería baja, así que se borraron el
+script `hypr/.config/hypr/scripts/battery-notify.sh`, su unit de usuario
+`battery-notify.service` y el helper `bat()` del `.zshrc`.
+
+Si esta máquina **todavía no pulleó**:
+
+```bash
+systemctl --user disable --now battery-notify.service   # primero esto
+cd ~/.dotfiles && git pull
+systemctl --user daemon-reload
+rm -f ~/.config/hypr/scripts/battery-notify.sh
+```
+
+Si **ya pulleaste**, el unit desapareció y `disable` falla con "Unit file
+does not exist": sacá los symlinks a mano.
+
+```bash
+rm -f ~/.config/systemd/user/battery-notify.service \
+      ~/.config/systemd/user/default.target.wants/battery-notify.service \
+      ~/.config/hypr/scripts/battery-notify.sh
+systemctl --user daemon-reload
+```
+
+En las dos variantes, la función `bat()` sigue viva en las shells ya
+abiertas hasta que abras una nueva; `unset -f bat` la saca en el acto.
+
+Además, el paquete stow `systemd` quedó **sin archivos** (era su único
+contenido) y salió de `STOW_PACKAGES` en `bootstrap.sh` y de la lista de
+paquetes de este README: git no versiona directorios vacíos, así que en un
+clone nuevo `systemd/` no existe y `stow systemd` cortaba el bootstrap con
+`set -euo pipefail`. Si volvés a agregar units de usuario, recreá el
+directorio y sumá el paquete a las **dos** listas.
 
 --------------------------------------------------
 
@@ -207,6 +275,11 @@ los pills de la barra (`theme.bar.buttons.radius` = `0.5em`).
 
 ## Nota para asistentes de IA
 
+- **Después de un `git pull`, leé "Al traer cambios".** Si el pull trajo
+  eliminaciones, el repo ya no las tiene pero la máquina sí: units de
+  systemd enabled apuntando a la nada y symlinks de stow rotos. Hay una
+  lista de migraciones con fecha ahí; aplicá las que esta máquina no corrió
+  y **no las borres del README** después de aplicarlas.
 - **No corras `sudo` en comandos no interactivos.** No hay askpass: el
   comando falla, y cada fallo cuenta para `pam_faillock`. Tres seguidos
   bloquean el sudo del usuario 10 minutos (`deny=3`, `unlock_time=600`),
@@ -229,7 +302,7 @@ los pills de la barra (`theme.bar.buttons.radius` = `0.5em`).
 
 ```bash
 cd ~/.dotfiles
-stow -D bin hypr hyprpanel kitty nvim systemd walker walls zsh
+stow -D bin hypr hyprpanel kitty nvim walker walls zsh
 ```
 
 Borrar los symlinks es seguro. Borrar archivos dentro de `~/.dotfiles`

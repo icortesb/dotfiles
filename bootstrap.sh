@@ -26,7 +26,10 @@ AUR_PACKAGES=(
   matugen-bin grimblast-git
 )
 
-STOW_PACKAGES=(bin hypr hyprpanel kitty nvim systemd walker walls zsh)
+# `systemd` salió de la lista: quedó sin archivos y git no versiona
+# directorios vacíos, así que en un clone nuevo no existe y stow corta el
+# bootstrap. Volvé a sumarlo si agregás units de usuario.
+STOW_PACKAGES=(bin hypr hyprpanel kitty nvim walker walls zsh)
 
 if [ ! -d "$DOTFILES_DIR" ]; then
   echo "Cloná el repo primero:"
@@ -53,7 +56,9 @@ backup_if_exists() {
   fi
 }
 backup_if_exists "$HOME/.zshrc"
-for d in hypr hyprpanel kitty nvim walker systemd; do
+# Ojo: `systemd` NO va acá. Stow ya no aporta nada a ~/.config/systemd, así
+# que moverlo al backup solo desactivaría los units propios de la máquina.
+for d in hypr hyprpanel kitty nvim walker; do
   backup_if_exists "$HOME/.config/$d"
 done
 
