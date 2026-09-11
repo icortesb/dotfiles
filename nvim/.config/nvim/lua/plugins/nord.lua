@@ -32,6 +32,10 @@ return {
     },
   },
 
+  -- Temas que trae LazyVim y no usamos
+  { "folke/tokyonight.nvim", enabled = false },
+  { "catppuccin/nvim", enabled = false },
+
   -- Disable Snacks scroll animation
   {
     "folke/snacks.nvim",

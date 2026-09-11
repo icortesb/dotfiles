@@ -43,8 +43,8 @@ You can have as many open as you want. Closing a buffer removes it from the bar.
 ### Closing buffers
 | Key | Action |
 |-----|--------|
-| `Space w` | Save and close current buffer |
-| `Space q` | Close without saving |
+| `Space bw` | Save and close current buffer |
+| `Space bd` | Close without saving |
 
 Closing a buffer does **not** close the window. Your layout stays intact.
 
@@ -190,7 +190,7 @@ Brackets, quotes, and tags close automatically. Press the closing char to skip o
 `nvim-ts-autotag` closes HTML/JSX tags automatically on `>`.
 
 ### Emmet — HTML/CSS abbreviations
-Type your abbreviation then `Ctrl+y ,` to expand.
+Type the abbreviation and pick it from the completion menu (`emmet_language_server`). Works in HTML, CSS, JSX/TSX, Vue and Astro — not in `.php` files.
 
 | Abbreviation | Expands to |
 |---|---|
@@ -214,7 +214,7 @@ Every time you copy (`y`) something it goes into a history. You can cycle throug
 |-----|--------|
 | `u` | Undo |
 | `Ctrl+r` | Redo |
-| `Space u` | Open undotree — full visual undo history, never lose a change |
+| `Space U` | Open undotree — full visual undo history, never lose a change |
 
 ---
 
@@ -387,7 +387,7 @@ These are commands you run occasionally to keep things working.
 
 | Key | Action |
 |-----|--------|
-| `Space u` | Undotree |
+| `Space U` | Undotree |
 | `gx` | Open URL under cursor in browser |
 | `Space,` | Switch buffer by name |
 
@@ -401,7 +401,7 @@ MODES             i         insert mode
                   jk        back to normal (faster)
 
 BUFFERS           Shift+h/l prev/next buffer (tab)
-                  Space w   save and close
+                  Space bw  save and close
                   Space,    switch buffer by name
 
 NAVIGATE          Space ff  find file
