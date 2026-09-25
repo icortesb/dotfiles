@@ -92,6 +92,34 @@ las entradas posteriores al último pull de *esta* máquina; son idempotentes,
 repetirlas no rompe nada. **No las borres**: otra máquina puede no haberlas
 corrido todavía.
 
+#### 2026-09-25 — hyprlock.conf tenía 5 keys que ya no existen en 0.9.x (commit `63cca21`)
+
+`hyprlock` 0.9.6 sacó `general:disable_loading_bar` (se eliminó la barra de
+carga entera, PR #714), `general:grace` (ahora es el flag `--grace`, PR
+#802), `general:no_fade_in` (reemplazado por el sistema de animaciones, PR
+#631) e `input-field:fail_transitions` (idem, ahora es
+`animation=inputFieldColors,...`); `fail_timeout` se movió de `input-field`
+a `general` (PR #718). Las 5 keys viejas no rompían nada, pero tiraban un
+"config option does not exist" en el log en cada lock. También se corrigió
+un bug preexistente en el script inline del label de música (`else echo ""
+fi` sin `;` antes de `fi`, que tiraba "unexpected end of file" cada vez que
+corría) y se agregó `--grace 2` al `lock_cmd` de `hypridle.conf` para que
+el lock por idle tenga la misma gracia que el manual (`SUPER + L` ya lo
+pasaba).
+
+`git pull` alcanza, no hay que restow ni reiniciar nada — son symlinks a
+archivos de config, no units de systemd. Para confirmar que se aplicó:
+
+```bash
+hyprlock --grace 2 > /tmp/hyprlock-test.log 2>&1 &
+sleep 1
+grep "Config error" /tmp/hyprlock-test.log   # no debería imprimir nada
+```
+
+Desbloqueá normal después. Si el grep todavía muestra errores, revisá que
+`~/.config/hypr/hyprlock.conf` y `hypridle.conf` sean symlinks a este repo
+(`readlink -f ~/.config/hypr` tiene que apuntar a `~/.dotfiles/hypr/...`).
+
 #### 2026-09-09 — se eliminó `battery-notify` (commit `9351ae4`)
 
 HyprPanel ya trae su propio aviso de batería baja, así que se borraron el
