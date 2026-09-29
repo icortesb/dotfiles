@@ -117,7 +117,16 @@ export PATH="$PATH:$HOME/.local/bin"
 export PATH=$HOME/.opencode/bin:$PATH
 export PATH="$HOME/.config/composer/vendor/bin:$PATH"
 export PATH="$HOME/.npm-global/bin:$PATH"
-alias mdg-db='harlequin --config-path ~/.config/harlequin/config.toml --profile mdg-db'
+mdg-db() {
+  (( $# )) || { harlequin --config-path ~/.config/harlequin/config.toml --profile mdg-db; return }
+  psql "host=127.0.0.1 port=15432 dbname=mobidb user=mobidb sslmode=require" -X -P pager=off -c "$*"
+}
+mdg-local() {
+  docker start mobidb-local >/dev/null || return
+  (( $# )) || { harlequin --config-path ~/.config/harlequin/config.toml --profile mdg-local; return }
+  psql postgresql://mobidb_app@127.0.0.1:35432/mobidb -X -P pager=off -c "$*"
+}
+alias mdg-local-sync='docker start mobidb-local >/dev/null && (cd ~/MDG/mdg-infra && git pull --ff-only -q && PATH=$HOME/.cache/awsshim:$PATH python3 access/mobidb-seed/seed-stg.py --target local --apply)'
 alias 3gproxy="echo -n \"Km8S''iR3p*p0cS+9{'V?8-00eE£6)\" | wl-copy"
 alias release='echo -n "[RELEASE][$(date +%F)]" | wl-copy >/dev/null 2>&1 && exit'
 # Claude Code: si la versión que dejó el auto-update no arranca, cae sola a la
