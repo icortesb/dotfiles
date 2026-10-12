@@ -29,7 +29,7 @@ AUR_PACKAGES=(
 # `systemd` salió de la lista: quedó sin archivos y git no versiona
 # directorios vacíos, así que en un clone nuevo no existe y stow corta el
 # bootstrap. Volvé a sumarlo si agregás units de usuario.
-STOW_PACKAGES=(bin hypr hyprpanel kitty nvim walker walls zsh)
+STOW_PACKAGES=(bin claude hypr hyprpanel kitty nvim walker walls zsh)
 
 if [ ! -d "$DOTFILES_DIR" ]; then
   echo "Cloná el repo primero:"
@@ -65,6 +65,9 @@ done
 echo "==> stow"
 cd "$DOTFILES_DIR"
 stow "${STOW_PACKAGES[@]}"
+
+echo "==> Hook de notificaciones de Claude Code"
+bash "$DOTFILES_DIR/claude/setup-settings.sh"
 
 echo "==> Generando config de HyprPanel"
 bash "$HOME/.config/hyprpanel/generate.sh"
