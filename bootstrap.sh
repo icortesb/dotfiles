@@ -12,6 +12,7 @@ PACMAN_PACKAGES=(
   kitty neovim zsh
   ttf-jetbrains-mono-nerd
   brightnessctl playerctl
+  libnotify lm_sensors  # notify-send del hook de Claude; sensors del módulo de temperatura
 )
 
 # AUR (yay)

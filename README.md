@@ -19,7 +19,7 @@ Configs de Arch Linux + Hyprland, gestionadas con GNU Stow.
 | Lock / idle | hyprlock + hypridle |
 | Shell | zsh |
 
-Paquetes stow: `bin hypr hyprpanel kitty nvim walker walls zsh`
+Paquetes stow: `bin claude hypr hyprpanel kitty nvim walker walls zsh`
 
 **Ya no se usan** waybar, swaync, wofi ni hyprpaper. Si un historial viejo
 o una guía te dice que los instales, está desactualizado.
@@ -36,7 +36,8 @@ cd ~/.dotfiles
 
 `bootstrap.sh` instala paquetes de repos oficiales y de AUR, respalda las
 configs existentes que no sean symlinks en `~/.dotfiles-backup-<fecha>`,
-aplica stow, genera la config de HyprPanel y detecta monitores.
+aplica stow, registra el hook de notificaciones de Claude Code, genera la
+config de HyprPanel y detecta monitores.
 
 Pide sudo una vez, para `pacman -S`. El resto no necesita root.
 
@@ -91,6 +92,53 @@ Cada commit que elimine algo deja acá su procedimiento, con fecha. Aplicá
 las entradas posteriores al último pull de *esta* máquina; son idempotentes,
 repetirlas no rompe nada. **No las borres**: otra máquina puede no haberlas
 corrido todavía.
+
+#### 2026-10-12 — notificaciones de Claude Code: una sola a la vez (paquete `claude`)
+
+Cada aviso de Claude Code ("needs your permission", "waiting for your
+input") se apilaba en HyprPanel. Ahora un hook `Notification` los manda con
+`notify-send -r` y cada uno **reemplaza** al anterior (el id se guarda en
+`$XDG_RUNTIME_DIR/claude-notify-id`, compartido entre todas las sesiones).
+Es un paquete stow nuevo, `claude`, con `~/.claude/hooks/notify-replace.sh`.
+`~/.claude/settings.json` y `~/.claude.json` **no** se versionan (tienen
+permisos y estado propios de cada máquina); `claude/setup-settings.sh` les
+agrega solo el hook y `preferredNotifChannel=notifications_disabled`
+(si no, llegan los avisos nativos *además* del hook). Idempotente.
+
+Requiere `notify-send` (libnotify) y `jq`. Si ya existe un `~/.claude/hooks`
+real (no symlink), stow protesta: movelo o borralo antes.
+
+```bash
+cd ~/.dotfiles && git pull
+stow claude
+bash claude/setup-settings.sh
+```
+
+Reiniciá las sesiones de Claude abiertas: los hooks se leen al iniciar.
+Para confirmar:
+
+```bash
+readlink -f ~/.claude/hooks/notify-replace.sh      # apunta a ~/.dotfiles/claude/...
+jq -c .hooks ~/.claude/settings.json
+echo '{"message":"prueba"}' | ~/.claude/hooks/notify-replace.sh   # aparece un aviso; repetirlo lo reemplaza
+```
+
+#### 2026-10-12 — módulo `custom/temp` en la barra de HyprPanel
+
+Suma la temperatura de CPU (k10temp Tctl) y GPU (amdgpu edge/junction) entre
+`cpu` y `ram`; el click abre `watch sensors` en kitty. Vive en
+`config.base.json` / `modules.base.json` + `scripts/temp-label.sh`. Necesita
+`lm_sensors` (ya en `bootstrap.sh`). Los `config.json` / `modules.json` están
+gitignorados, así que **hay que regenerarlos** o el módulo no aparece:
+
+```bash
+cd ~/.dotfiles && git pull
+sudo pacman -S --needed lm_sensors
+bash ~/.config/hyprpanel/generate.sh && hyprpanel -q; hyprpanel
+```
+
+En una máquina sin `k10temp` (CPU Intel) el módulo muestra `󰔏  -` con el
+tooltip "k10temp not found": hay que adaptar el chip en `temp-label.sh`.
 
 #### 2026-09-25 — hyprlock.conf tenía 5 keys que ya no existen en 0.9.x (commit `63cca21`)
 
@@ -330,7 +378,7 @@ los pills de la barra (`theme.bar.buttons.radius` = `0.5em`).
 
 ```bash
 cd ~/.dotfiles
-stow -D bin hypr hyprpanel kitty nvim walker walls zsh
+stow -D bin claude hypr hyprpanel kitty nvim walker walls zsh
 ```
 
 Borrar los symlinks es seguro. Borrar archivos dentro de `~/.dotfiles`
