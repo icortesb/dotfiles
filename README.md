@@ -93,6 +93,20 @@ las entradas posteriores al último pull de *esta* máquina; son idempotentes,
 repetirlas no rompe nada. **No las borres**: otra máquina puede no haberlas
 corrido todavía.
 
+#### 2026-10-12 — botón NAT64 en HyprPanel (módulo `custom/nat64`)
+
+Cuando el CGNAT de Telecentro corta IPv4 (GitHub da `No route to host`),
+el botón de la barra (`󰖟 off` / `󰖟 NAT64`) cambia el DNS de la conexión
+activa a DNS64 de nat64.net, así los hosts solo-IPv4 salen por IPv6. Un click
+alterna; al apagarlo restaura el DNS original (guardado en
+`~/.local/state/nat64-orig`). Requiere NetworkManager (en una máquina solo-iwd
+no hace nada útil). No se versionan los `config.json`/`modules.json`, se regeneran:
+
+```bash
+cd ~/.dotfiles && git pull
+~/.config/hyprpanel/generate.sh   # y reiniciar HyprPanel
+```
+
 #### 2026-10-12 — notificaciones de Claude Code: una sola a la vez (paquete `claude`)
 
 Cada aviso de Claude Code ("needs your permission", "waiting for your

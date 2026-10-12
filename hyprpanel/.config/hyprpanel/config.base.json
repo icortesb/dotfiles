@@ -413,6 +413,7 @@
         "media",
         "cpu",
         "custom/temp",
+        "custom/nat64",
         "ram"
       ],
       "middle": [
@@ -436,6 +437,7 @@
         "media",
         "cpu",
         "custom/temp",
+        "custom/nat64",
         "ram"
       ],
       "middle": [
@@ -459,6 +461,7 @@
         "media",
         "cpu",
         "custom/temp",
+        "custom/nat64",
         "ram"
       ],
       "middle": [

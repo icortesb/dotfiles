@@ -42,5 +42,15 @@
     "actions": {
       "onLeftClick": "kitty --hold -e watch -n1 sensors"
     }
+  },
+  "custom/nat64": {
+    "label": "{text}",
+    "tooltip": "{tooltip}",
+    "execute": "$HOME/.config/hyprpanel/scripts/nat64.sh status",
+    "interval": 10000,
+    "hideOnEmpty": false,
+    "actions": {
+      "onLeftClick": "$HOME/.config/hyprpanel/scripts/nat64.sh toggle"
+    }
   }
 }
