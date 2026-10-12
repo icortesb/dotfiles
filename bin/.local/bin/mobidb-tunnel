@@ -50,6 +50,13 @@ connecting_pid() {
   if [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null; then printf '%s' "$pid"; else rm -f "$LOCK_FILE"; fi
 }
 
+cancel_connecting() {
+  local pid; pid=$(connecting_pid)
+  [[ -n "$pid" ]] || return 0
+  kill -TERM -- "-$pid" 2>/dev/null || kill -TERM "$pid" 2>/dev/null
+  rm -f "$LOCK_FILE"
+}
+
 missing_requirement() {
   [[ -x "$TUNNEL_SCRIPT" ]] || { printf 'no se encontro %s' "$TUNNEL_SCRIPT"; return 0; }
   command -v aws >/dev/null 2>&1 || { printf 'falta aws cli'; return 0; }
@@ -72,7 +79,8 @@ render_status() {
 click derecho para cerrar y hacer logout (se cierra solo al volver a la oficina)"
   elif [[ -n "$(connecting_pid)" ]]; then
     text="$ICON_DB  DB…"; class="connecting"
-    tooltip="conectando: completa el MFA en el navegador"
+    tooltip="conectando: completa el MFA en el navegador
+click para reintentar, click derecho para cancelar"
   else
     text="$ICON_DB  DB"; class="disconnected"
     tooltip="click para conectar"
@@ -116,7 +124,8 @@ _connect_worker() {
 }
 
 do_connect() {
-  if [[ -n "$(tunnel_pid)" || -n "$(connecting_pid)" ]]; then return 0; fi
+  [[ -n "$(tunnel_pid)" ]] && return 0
+  cancel_connecting
   notify-send -i dialog-information "mobidb" "Conectando: completa el MFA en el navegador" 2>/dev/null
   setsid "$0" _connect_worker </dev/null >/dev/null 2>&1 &
   disown
@@ -124,6 +133,7 @@ do_connect() {
 }
 
 do_disconnect() {
+  cancel_connecting
   local pid; pid=$(tunnel_pid)
   [[ -n "$pid" ]] && kill -INT "$pid" 2>/dev/null
   aws logout --profile "$AWS_PROFILE_NAME" >/dev/null 2>&1
