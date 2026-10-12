@@ -412,6 +412,7 @@
         "windowtitle",
         "media",
         "cpu",
+        "custom/temp",
         "ram"
       ],
       "middle": [
@@ -434,6 +435,7 @@
         "windowtitle",
         "media",
         "cpu",
+        "custom/temp",
         "ram"
       ],
       "middle": [
@@ -456,6 +458,7 @@
         "windowtitle",
         "media",
         "cpu",
+        "custom/temp",
         "ram"
       ],
       "middle": [

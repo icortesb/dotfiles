@@ -32,5 +32,15 @@
       "onLeftClick": "$HOME/.config/hyprpanel/scripts/iwd-menu.sh",
       "onRightClick": "sh -c 'for x in /sys/class/net/*/wireless; do [ -e \"$x\" ] && iwctl station \"$(basename $(dirname $x))\" disconnect && exit; done'"
     }
+  },
+  "custom/temp": {
+    "label": "{text}",
+    "tooltip": "{tooltip}",
+    "execute": "$HOME/.config/hyprpanel/scripts/temp-label.sh",
+    "interval": 3000,
+    "hideOnEmpty": false,
+    "actions": {
+      "onLeftClick": "kitty --hold -e watch -n1 sensors"
+    }
   }
 }
