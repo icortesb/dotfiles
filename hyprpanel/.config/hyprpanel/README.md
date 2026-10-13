@@ -114,8 +114,9 @@ Log out / back in (or just `hyprpanel` from a terminal to test first).
 5. Seeds `~/.config/background` (HyprPanel's "current wallpaper" copy) so its
    first `swww img` call succeeds.
 
-`notifications.grouped` (see [Local fork](#local-fork)) is the one key here that
-stock HyprPanel does not understand — it is ignored by `ags-hyprpanel-git`.
+`notifications.grouped` and `menus.media.requireTrackInfo` (see
+[Local fork](#local-fork)) are the keys here that stock HyprPanel does not
+understand — `ags-hyprpanel-git` ignores them.
 
 To apply an edit without relogin: `~/.config/hyprpanel/generate.sh && hyprpanel -q; hyprpanel`
 (or press **Super+R**).
@@ -255,6 +256,15 @@ What the branch carries on top of `1961ba8`:
   bundle by `scripts/patch-empty-action-buttons.sh`, which had to be re-run
   after every package update; the fix now lives in the fork's source, so the
   script is gone.
+- **Browsers only count as media players with real media** — a browser exposes
+  one MPRIS player per instance, and any tab that makes a sound (a Gmail draft)
+  takes it over with the page title, so the bar showed "Borradores (1) - …" as
+  if it were a song. `menus.media.ignore` can only drop the whole browser,
+  YouTube included. Adds `menus.media.requireTrackInfo`: identities listed there
+  (Brave, Chrome, Firefox, Chromium here) only count while they report an
+  artist (YouTube sets the channel) and are not stopped, re-evaluated live.
+  Together with `bar.media.show_active_only` the media pill only appears for
+  Spotify, mpv/VLC or a real video in the browser.
 
 Rebuilding after editing the fork:
 

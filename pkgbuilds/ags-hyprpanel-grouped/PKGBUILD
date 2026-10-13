@@ -1,7 +1,7 @@
 # Basado en el PKGBUILD de ags-hyprpanel-git (cat_nm, jaskir).
 # Construye desde el clon local con el parche de agrupacion de notificaciones.
 pkgname=ags-hyprpanel-grouped
-pkgver=r632.bc41b9e
+pkgver=r633.55fcb55
 pkgrel=1
 pkgdesc="HyprPanel con agrupacion de notificaciones por aplicacion"
 provides=('ags-hyprpanel-git')
