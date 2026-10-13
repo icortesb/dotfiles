@@ -99,12 +99,23 @@ Cuando el CGNAT de Telecentro corta IPv4 (GitHub da `No route to host`),
 el botón de la barra (`󰖟 off` / `󰖟 NAT64`) cambia el DNS de la conexión
 activa a DNS64 de nat64.net, así los hosts solo-IPv4 salen por IPv6. Un click
 alterna; al apagarlo restaura el DNS original (guardado en
-`~/.local/state/nat64-orig`). Requiere NetworkManager (en una máquina solo-iwd
-no hace nada útil). No se versionan los `config.json`/`modules.json`, se regeneran:
+`~/.local/state/nat64-orig`). No se versionan los `config.json`/`modules.json`, se regeneran:
 
 ```bash
 cd ~/.dotfiles && git pull
 ~/.config/hyprpanel/generate.sh   # y reiniciar HyprPanel
+```
+
+#### 2026-10-13 — botón NAT64 también en máquinas iwd (sin NetworkManager)
+
+Sin NetworkManager, `nat64.sh` cambia el DNS de la interfaz por defecto con
+`resolvectl` (iwd + systemd-resolved). Solo sirve en una red con IPv6 global;
+si no hay, el tooltip lo avisa con ⚠. iwd puede volver a poner su DNS al
+reconectar: el botón vuelve a `off` y alcanza con otro click. Si el click tira
+"¿falta la regla de polkit?", instalá la regla que deja a `wheel` cambiar el DNS:
+
+```bash
+sudo install -m644 ~/.dotfiles/system/polkit/50-resolved-dns-wheel.rules /etc/polkit-1/rules.d/
 ```
 
 #### 2026-10-12 — notificaciones de Claude Code: una sola a la vez (paquete `claude`)

@@ -1,0 +1,9 @@
+// Deja a los usuarios de wheel en una sesión local activa cambiar el DNS por
+// interfaz de systemd-resolved sin pedir contraseña. Lo usa el botón NAT64 de
+// HyprPanel en máquinas iwd (sin NetworkManager). Va en /etc/polkit-1/rules.d/.
+polkit.addRule(function (action, subject) {
+  if (action.id == "org.freedesktop.resolve1.set-dns-servers" &&
+      subject.local && subject.active && subject.isInGroup("wheel")) {
+    return polkit.Result.YES;
+  }
+});
