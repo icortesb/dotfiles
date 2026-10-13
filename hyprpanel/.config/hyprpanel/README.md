@@ -266,6 +266,18 @@ What the branch carries on top of `1961ba8`:
   Together with `bar.media.show_active_only` the media pill only appears for
   Spotify, mpv/VLC or a real video in the browser.
 
+Updating another machine after a `git pull` of the dotfiles: if
+`pkgver=` in `pkgbuilds/ags-hyprpanel-grouped/PKGBUILD` changed, the fork has
+new commits and the installed package is stale. Config keys it doesn't know yet
+are silently ignored, so nothing errors — the feature just doesn't show up.
+
+```sh
+pacman -Q ags-hyprpanel-grouped                      # compare with pkgver= in the PKGBUILD
+cd ~/.dotfiles/pkgbuilds/ags-hyprpanel-grouped
+makepkg -Ccf && sudo pacman -U ags-hyprpanel-grouped-*.pkg.tar.zst   # say yes to replacing ags-hyprpanel-git if asked
+~/.config/hyprpanel/generate.sh && hyprpanel -q; hyprpanel
+```
+
 Rebuilding after editing the fork:
 
 ```sh
