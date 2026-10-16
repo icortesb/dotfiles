@@ -93,7 +93,24 @@ las entradas posteriores al último pull de *esta* máquina; son idempotentes,
 repetirlas no rompe nada. **No las borres**: otra máquina puede no haberlas
 corrido todavía.
 
-#### 2026-10-12 — botón NAT64 en HyprPanel (módulo `custom/nat64`)
+#### 2026-10-16 — se retira el botón NAT64 (módulo `custom/nat64`)
+
+Telecentro nos sacó del CGNAT y IPv4 volvió a andar, así que se borraron el
+módulo, `scripts/nat64.sh` y la regla de polkit. **Antes del pull**, si el botón
+está en `NAT64`, apagalo con un click para que vuelva el DNS original. Después:
+
+```bash
+cd ~/.dotfiles && git pull
+~/.config/hyprpanel/generate.sh   # y reiniciar HyprPanel
+rm -f ~/.local/state/nat64-orig
+sudo rm -f /etc/polkit-1/rules.d/50-resolved-dns-wheel.rules
+resolvectl dns                    # tiene que mostrar el DNS del ISP, no nat64.net
+```
+
+Si ya hiciste el pull con NAT64 prendido: `sudo resolvectl revert wlan0`
+(iwd) o `nmcli con mod <conexión> ipv4.dns "" ipv6.dns "" ipv4.ignore-auto-dns no ipv6.ignore-auto-dns no && nmcli con up <conexión>` (NetworkManager).
+
+#### 2026-10-12 — botón NAT64 en HyprPanel (módulo `custom/nat64`) — retirado el 2026-10-16
 
 Cuando el CGNAT de Telecentro corta IPv4 (GitHub da `No route to host`),
 el botón de la barra (`󰖟 off` / `󰖟 NAT64`) cambia el DNS de la conexión
@@ -106,7 +123,7 @@ cd ~/.dotfiles && git pull
 ~/.config/hyprpanel/generate.sh   # y reiniciar HyprPanel
 ```
 
-#### 2026-10-13 — botón NAT64 también en máquinas iwd (sin NetworkManager)
+#### 2026-10-13 — botón NAT64 también en máquinas iwd (sin NetworkManager) — retirado el 2026-10-16
 
 Sin NetworkManager, `nat64.sh` cambia el DNS de la interfaz por defecto con
 `resolvectl` (iwd + systemd-resolved). Solo sirve en una red con IPv6 global;
